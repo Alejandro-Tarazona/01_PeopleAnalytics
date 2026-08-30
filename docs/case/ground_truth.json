@@ -3,7 +3,8 @@
     "purpose": "Design specification for the four anomalies deliberately built into the source data.",
     "status": "Design artefact. Every observed figure below is reproduced by the SQL layer (sql/build.sql) and the band cleansing, so the answer key is verifiable from the repository itself.",
     "horizon": "2024-09 .. 2026-08",
-    "warning": "Do not edit to make an analysis pass. This is the answer key against which detection precision and recall are measured."
+    "warning": "Do not edit to make an analysis pass. This is the answer key against which detection precision and recall are measured.",
+    "scoring": "Each segment declares the rule that should fire on it, or null when no rule should. The prioritisation rule is specified in detection-rule.md and implemented as DAX measures; block 6 scores that implementation against this file and reports precision and recall."
   },
   "baseline": {
     "headcount": 4500,
@@ -60,7 +61,8 @@
         "attrition_vs_baseline": 2.57,
         "mean_base_salary_usd": 46622,
         "share_below_band": 0.86
-      }
+      },
+      "expected_rule": "pay_adjustment"
     },
     {
       "id": "B",
@@ -71,7 +73,7 @@
       "correct_action": "Internal equity adjustment for incumbents with 3+ years of tenure",
       "description": "Invisible in the segment average, which sits at 0.99. A tenure-cohort cut shows incumbents with 3+ years at 0.912 against recent hires at 1.062 - a 15-point compression gap. Attrition has not reacted yet: an internal equity problem before it becomes a retention problem.",
       "definition": {
-        "city": "Dublín",
+        "city": "Dublin",
         "job_code": "ENG",
         "job_levels": [
           "IC5"
@@ -95,7 +97,8 @@
           "mean_compa_ratio": 1.062
         },
         "compression_gap": -0.15
-      }
+      },
+      "expected_rule": "internal_equity"
     },
     {
       "id": "C",
@@ -124,7 +127,8 @@
         "attrition_vs_own_region": 0.96,
         "mean_base_salary_usd": 64214,
         "share_below_band": 0.623
-      }
+      },
+      "expected_rule": null
     },
     {
       "id": "D",
@@ -135,7 +139,7 @@
       "correct_action": "Organisational intervention: add a supervisory layer",
       "description": "SECOND DESIGNED DISTRACTOR. Attrition at 2.4x the baseline with a compa-ratio of 1.01 and only 4% of the segment below band. The cause is organisational, not financial: span of control of 15.1 against 6.7 across the rest of the company.",
       "definition": {
-        "city": "Singapur",
+        "city": "Singapore",
         "job_code": "RSK",
         "job_levels": [
           "IC2"
@@ -150,7 +154,8 @@
         "attrition_vs_baseline": 2.44,
         "mean_base_salary_usd": 77779,
         "share_below_band": 0.04
-      }
+      },
+      "expected_rule": "organisational"
     }
   ],
   "background_noise": {

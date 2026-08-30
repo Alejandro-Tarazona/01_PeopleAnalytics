@@ -57,10 +57,10 @@ purpose.
 |---|---|
 | 1 · Source data and case design | **Complete** |
 | 2 · SQL layer (PostgreSQL) | **Complete** |
-| 3 · Salary-survey cleansing in Power Query · data validation suite | Pending |
-| 4 · Semantic model (PBIP/TMDL) and DAX measures | Pending |
+| 3 · Data validation suite | **Complete** |
+| 4 · Semantic model (PBIP/TMDL), Power Query cleansing and DAX measures | Pending |
 | 5 · Hierarchical RLS and minimum group size rule | Pending |
-| 6 · Python ↔ DAX reconciliation | Pending |
+| 6 · Python ↔ DAX reconciliation and detection scoring | Pending |
 | 7 · Three-page report | Pending |
 | 8 · Executive presentation | Pending |
 
@@ -138,6 +138,59 @@ as a control against over-fitting.
 
 Full specification: [`docs/case/data-design.md`](docs/case/data-design.md).
 Machine-readable answer key: [`docs/case/ground_truth.json`](docs/case/ground_truth.json).
+
+---
+
+## Validation
+
+Python's only job in this repository is validation. It recomputes what SQL
+produced and compares. **It does not produce findings** — those come from the
+semantic model, and Python's role is to make the model's output checkable rather
+than merely asserted.
+
+Two levels today, 29 tests:
+
+| Level | What it proves |
+|---|---|
+| **Source** | Referential integrity, unique grain, closed domains, temporal coherence, and that the vendor survey was cleansed correctly — footer removed, duplicates dropped, `$120,000` parsed, `IC 3` normalised |
+| **Transformation** | Every derived value recomputed independently in pandas from the source files and compared against SQL: currency conversion, span of control, target cash, the five-peer suppression rule |
+
+This is double-entry bookkeeping applied to data: two independent
+implementations of the same calculation that must agree. It is the cheapest
+insurance against the most expensive failure in BI, which is reporting a number
+that does not match the source.
+
+A third level arrives in block 6. Once the prioritisation rule exists as DAX
+measures, its output is scored against the answer key in
+[`ground_truth.json`](docs/case/ground_truth.json) and reported as precision and
+recall — the reason this project uses synthetic data in the first place.
+
+```bash
+pytest
+```
+
+---
+
+## The prioritisation rule
+
+Which segments get recommended for action is an explicit, written rule rather
+than a judgement call over a dashboard: it can be reviewed, repeated by someone
+else, and shown to be wrong. It is specified in
+[`docs/case/detection-rule.md`](docs/case/detection-rule.md) and implemented as
+DAX measures in the semantic model.
+
+Three problems need three different answers, so there are three rules: **pay
+adjustment** (genuinely below market on total cash, with attrition to match),
+**internal equity** (incumbents fallen behind their own recent hires), and
+**organisational** (attrition is real but pay is not the cause).
+
+The single most consequential choice is reading **total target cash rather than
+base salary**. Base pay alone flags São Paulo Sales at 0.88 — a false positive
+whose price is a raise for a population that was never underpaid.
+
+An earlier draft used "attrition ≥ 1.5× the baseline". It was replaced by a
+one-sided Poisson test, because at a 13.5 % baseline a 1.5× reading on thirty
+people has a **22 % chance of being noise**.
 
 ---
 
