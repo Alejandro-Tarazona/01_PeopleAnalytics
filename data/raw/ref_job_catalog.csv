@@ -1,0 +1,101 @@
+job_code,job_family,job_level,track,level_order
+ENG,Engineering,IC1,IC,1
+DAT,Data & Analytics,IC1,IC,1
+PRD,Product Management,IC1,IC,1
+SAL,Sales,IC1,IC,1
+MKT,Marketing,IC1,IC,1
+RSK,Risk & Compliance,IC1,IC,1
+FIN,Finance,IC1,IC,1
+HRS,Human Resources,IC1,IC,1
+LGL,Legal,IC1,IC,1
+OPS,Operations,IC1,IC,1
+ENG,Engineering,IC2,IC,2
+DAT,Data & Analytics,IC2,IC,2
+PRD,Product Management,IC2,IC,2
+SAL,Sales,IC2,IC,2
+MKT,Marketing,IC2,IC,2
+RSK,Risk & Compliance,IC2,IC,2
+FIN,Finance,IC2,IC,2
+HRS,Human Resources,IC2,IC,2
+LGL,Legal,IC2,IC,2
+OPS,Operations,IC2,IC,2
+ENG,Engineering,IC3,IC,3
+DAT,Data & Analytics,IC3,IC,3
+PRD,Product Management,IC3,IC,3
+SAL,Sales,IC3,IC,3
+MKT,Marketing,IC3,IC,3
+RSK,Risk & Compliance,IC3,IC,3
+FIN,Finance,IC3,IC,3
+HRS,Human Resources,IC3,IC,3
+LGL,Legal,IC3,IC,3
+OPS,Operations,IC3,IC,3
+ENG,Engineering,IC4,IC,4
+DAT,Data & Analytics,IC4,IC,4
+PRD,Product Management,IC4,IC,4
+SAL,Sales,IC4,IC,4
+MKT,Marketing,IC4,IC,4
+RSK,Risk & Compliance,IC4,IC,4
+FIN,Finance,IC4,IC,4
+HRS,Human Resources,IC4,IC,4
+LGL,Legal,IC4,IC,4
+OPS,Operations,IC4,IC,4
+ENG,Engineering,IC5,IC,5
+DAT,Data & Analytics,IC5,IC,5
+PRD,Product Management,IC5,IC,5
+SAL,Sales,IC5,IC,5
+MKT,Marketing,IC5,IC,5
+RSK,Risk & Compliance,IC5,IC,5
+FIN,Finance,IC5,IC,5
+HRS,Human Resources,IC5,IC,5
+LGL,Legal,IC5,IC,5
+OPS,Operations,IC5,IC,5
+ENG,Engineering,IC6,IC,6
+DAT,Data & Analytics,IC6,IC,6
+PRD,Product Management,IC6,IC,6
+SAL,Sales,IC6,IC,6
+MKT,Marketing,IC6,IC,6
+RSK,Risk & Compliance,IC6,IC,6
+FIN,Finance,IC6,IC,6
+HRS,Human Resources,IC6,IC,6
+LGL,Legal,IC6,IC,6
+OPS,Operations,IC6,IC,6
+ENG,Engineering,M1,Manager,4
+DAT,Data & Analytics,M1,Manager,4
+PRD,Product Management,M1,Manager,4
+SAL,Sales,M1,Manager,4
+MKT,Marketing,M1,Manager,4
+RSK,Risk & Compliance,M1,Manager,4
+FIN,Finance,M1,Manager,4
+HRS,Human Resources,M1,Manager,4
+LGL,Legal,M1,Manager,4
+OPS,Operations,M1,Manager,4
+ENG,Engineering,M2,Manager,5
+DAT,Data & Analytics,M2,Manager,5
+PRD,Product Management,M2,Manager,5
+SAL,Sales,M2,Manager,5
+MKT,Marketing,M2,Manager,5
+RSK,Risk & Compliance,M2,Manager,5
+FIN,Finance,M2,Manager,5
+HRS,Human Resources,M2,Manager,5
+LGL,Legal,M2,Manager,5
+OPS,Operations,M2,Manager,5
+ENG,Engineering,M3,Manager,6
+DAT,Data & Analytics,M3,Manager,6
+PRD,Product Management,M3,Manager,6
+SAL,Sales,M3,Manager,6
+MKT,Marketing,M3,Manager,6
+RSK,Risk & Compliance,M3,Manager,6
+FIN,Finance,M3,Manager,6
+HRS,Human Resources,M3,Manager,6
+LGL,Legal,M3,Manager,6
+OPS,Operations,M3,Manager,6
+ENG,Engineering,M4,Manager,7
+DAT,Data & Analytics,M4,Manager,7
+PRD,Product Management,M4,Manager,7
+SAL,Sales,M4,Manager,7
+MKT,Marketing,M4,Manager,7
+RSK,Risk & Compliance,M4,Manager,7
+FIN,Finance,M4,Manager,7
+HRS,Human Resources,M4,Manager,7
+LGL,Legal,M4,Manager,7
+OPS,Operations,M4,Manager,7

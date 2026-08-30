@@ -1,0 +1,17 @@
+# Analytical database — rebuilt from data/raw
+data/*.duckdb
+
+# Power BI Desktop
+**/.pbi/cache.abf
+**/.pbi/localSettings.json
+*.pbix
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db

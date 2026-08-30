@@ -1,0 +1,14 @@
+# Power BI Desktop writes CRLF in TMDL and PBIR files. Forcing CRLF on checkout keeps
+# diffs clean and stops Desktop from rewriting every line the moment a project opens.
+* text=auto eol=crlf
+
+# Data files keep LF so they stay portable and diffs stay readable.
+*.csv text eol=lf
+*.json text eol=lf
+
+# Binaries: never normalise, never diff as text.
+*.xlsx binary
+*.pbix binary
+*.pptx binary
+*.pdf binary
+*.png binary

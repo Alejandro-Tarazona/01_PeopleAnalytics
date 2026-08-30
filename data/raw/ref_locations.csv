@@ -1,0 +1,10 @@
+city,country,legal_entity,currency_code,region,is_hub,geo_tier,cost_of_labor_index
+San Francisco,United States,MPG Inc.,USD,NAM,False,T1,1.0
+New York,United States,MPG Inc.,USD,NAM,False,T1,0.97
+Miami,United States,MPG Inc.,USD,NAM,False,T2,0.82
+Bogotá,Colombia,MPG Colombia S.A.S.,COP,LAC,True,T4,0.34
+São Paulo,Brazil,MPG Brasil Ltda.,BRL,LAC,False,T3,0.42
+Mexico City,Mexico,MPG México S. de R.L.,MXN,LAC,False,T3,0.4
+Dublin,Ireland,MPG Ireland Ltd.,EUR,EMEA,True,T2,0.78
+London,United Kingdom,MPG UK Ltd.,GBP,EMEA,False,T1,0.92
+Singapore,Singapore,MPG Singapore Pte. Ltd.,SGD,APAC,True,T2,0.8

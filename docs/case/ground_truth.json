@@ -1,0 +1,168 @@
+{
+  "meta": {
+    "purpose": "Design specification for the four anomalies deliberately built into the source data.",
+    "status": "Design artefact. Every observed figure below is reproduced by the SQL layer (sql/build.sql) and the band cleansing, so the answer key is verifiable from the repository itself.",
+    "horizon": "2024-09 .. 2026-08",
+    "warning": "Do not edit to make an analysis pass. This is the answer key against which detection precision and recall are measured."
+  },
+  "baseline": {
+    "headcount": 4500,
+    "voluntary_attrition_ltm": 0.1349,
+    "mean_base_compa_ratio": 0.979,
+    "mean_ttc_compa_ratio": 0.983,
+    "mean_span_of_control": 6.72
+  },
+  "voluntary_attrition_by_region": {
+    "LAC": 0.1645,
+    "APAC": 0.1484,
+    "EMEA": 0.1291,
+    "NAM": 0.0953
+  },
+  "replacement_factor": {
+    "by_job_family": {
+      "OPS": 0.5,
+      "FIN": 1.0,
+      "HRS": 1.0,
+      "LGL": 1.0,
+      "RSK": 1.0,
+      "MKT": 1.0,
+      "ENG": 1.5,
+      "DAT": 1.5,
+      "PRD": 1.5,
+      "SAL": 1.5
+    },
+    "management": 2.0,
+    "note": "Declared assumption. Sensitivity tested at 1.0x / 1.5x / 2.0x on slide 11."
+  },
+  "segments": [
+    {
+      "id": "A",
+      "name": "Data & Analytics IC3-IC4 · Bogotá",
+      "verdict": "detect",
+      "priority": "high",
+      "root_cause": "Pay position sustained below market",
+      "correct_action": "Targeted salary adjustment for the segment",
+      "description": "Strong, consistent signal. Sustained pay drift: mean compa-ratio 0.85 with 86% of the segment below band minimum, and voluntary attrition at 2.6x the company baseline.",
+      "definition": {
+        "city": "Bogotá",
+        "job_code": "DAT",
+        "job_levels": [
+          "IC3",
+          "IC4"
+        ]
+      },
+      "observed": {
+        "headcount": 150,
+        "mean_base_compa_ratio": 0.852,
+        "mean_ttc_compa_ratio": 0.852,
+        "mean_span_of_control": 7.89,
+        "voluntary_attrition_ltm": 0.3465,
+        "attrition_vs_baseline": 2.57,
+        "mean_base_salary_usd": 46622,
+        "share_below_band": 0.86
+      }
+    },
+    {
+      "id": "B",
+      "name": "Engineering IC5 · Dublin",
+      "verdict": "detect",
+      "priority": "medium",
+      "root_cause": "Salary compression: recent hires paid above long-tenured incumbents",
+      "correct_action": "Internal equity adjustment for incumbents with 3+ years of tenure",
+      "description": "Invisible in the segment average, which sits at 0.99. A tenure-cohort cut shows incumbents with 3+ years at 0.912 against recent hires at 1.062 - a 15-point compression gap. Attrition has not reacted yet: an internal equity problem before it becomes a retention problem.",
+      "definition": {
+        "city": "Dublín",
+        "job_code": "ENG",
+        "job_levels": [
+          "IC5"
+        ]
+      },
+      "observed": {
+        "headcount": 90,
+        "mean_base_compa_ratio": 0.989,
+        "mean_ttc_compa_ratio": 0.989,
+        "mean_span_of_control": 7.62,
+        "voluntary_attrition_ltm": 0.1222,
+        "attrition_vs_baseline": 0.91,
+        "mean_base_salary_usd": 172480,
+        "share_below_band": 0.222,
+        "cohort_incumbents_3y_plus": {
+          "n": 44,
+          "mean_compa_ratio": 0.912
+        },
+        "cohort_recent_hires": {
+          "n": 46,
+          "mean_compa_ratio": 1.062
+        },
+        "compression_gap": -0.15
+      }
+    },
+    {
+      "id": "C",
+      "name": "Sales IC3-M1 · São Paulo",
+      "verdict": "dismiss",
+      "priority": "none",
+      "root_cause": "Pay mix: variable target well above market",
+      "correct_action": "None. Total target cash is in line with market.",
+      "description": "DESIGNED FALSE POSITIVE. Base compa-ratio 0.88, but a 41% variable target against a 25% market norm: total target cash lands at 0.99. Attrition is 15.8% against 16.4% for LATAM as a whole - below its own region, not above it. Only an analysis reading base salary in isolation would flag this as a priority.",
+      "definition": {
+        "city": "São Paulo",
+        "job_code": "SAL",
+        "job_levels": [
+          "IC3",
+          "IC4",
+          "M1"
+        ]
+      },
+      "observed": {
+        "headcount": 122,
+        "mean_base_compa_ratio": 0.879,
+        "mean_ttc_compa_ratio": 0.991,
+        "mean_span_of_control": 4.99,
+        "voluntary_attrition_ltm": 0.1577,
+        "attrition_vs_baseline": 1.17,
+        "attrition_vs_own_region": 0.96,
+        "mean_base_salary_usd": 64214,
+        "share_below_band": 0.623
+      }
+    },
+    {
+      "id": "D",
+      "name": "Risk & Compliance IC2 · Singapore",
+      "verdict": "dismiss",
+      "priority": "none",
+      "root_cause": "Excessive span of control (>12 direct reports)",
+      "correct_action": "Organisational intervention: add a supervisory layer",
+      "description": "SECOND DESIGNED DISTRACTOR. Attrition at 2.4x the baseline with a compa-ratio of 1.01 and only 4% of the segment below band. The cause is organisational, not financial: span of control of 15.1 against 6.7 across the rest of the company.",
+      "definition": {
+        "city": "Singapur",
+        "job_code": "RSK",
+        "job_levels": [
+          "IC2"
+        ]
+      },
+      "observed": {
+        "headcount": 100,
+        "mean_base_compa_ratio": 1.006,
+        "mean_ttc_compa_ratio": 1.006,
+        "mean_span_of_control": 15.1,
+        "voluntary_attrition_ltm": 0.3295,
+        "attrition_vs_baseline": 2.44,
+        "mean_base_salary_usd": 77779,
+        "share_below_band": 0.04
+      }
+    }
+  ],
+  "background_noise": {
+    "share_of_employees": 0.03,
+    "compa_ratio_sd": 0.15,
+    "employees_affected": 174,
+    "note": "Random compa-ratio deviation with no segment pattern. Must not produce any prioritised segment."
+  },
+  "mean_compa_ratio_by_region": {
+    "APAC": 1.006,
+    "NAM": 1.004,
+    "EMEA": 0.991,
+    "LAC": 0.941
+  }
+}
