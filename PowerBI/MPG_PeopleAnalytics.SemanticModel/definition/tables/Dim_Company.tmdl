@@ -1,6 +1,9 @@
 table Dim_Company
 	lineageTag: 601b2738-0f4b-444e-a4ac-d6d5ad4f3c0b
 
+	measure User = USERPRINCIPALNAME()
+		lineageTag: 061c3f73-a371-42dd-ad58-0b66c094953f
+
 	column company_key
 		dataType: int64
 		formatString: 0

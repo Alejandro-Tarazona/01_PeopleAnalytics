@@ -4,16 +4,6 @@
 table _Measures
 	lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a01
 
-	column Value
-		isHidden
-		formatString: 0
-		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a02
-		summarizeBy: sum
-		isNameInferred
-		sourceColumn: [Value]
-
-		annotation SummarizationSetBy = Automatic
-
 	/// Employees on the books at the latest month-end inside the current filter context.
 	/// Facts_HeadCount is a periodic snapshot: summing it across months would count the
 	/// same person once per month, which is how a headcount ends up ten times too large.
@@ -21,8 +11,8 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( COUNTROWS ( Facts_HeadCount ), Dim_Date[date_key] = LastSnapshot )
-		displayFolder: 01 Base
 		formatString: #,##0
+		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000000
 
 	/// Full-time equivalent at the latest month-end. Lower than headcount because
@@ -31,8 +21,8 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( SUM ( Facts_HeadCount[fte] ), Dim_Date[date_key] = LastSnapshot )
-		displayFolder: 01 Base
 		formatString: #,##0.0
+		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000001
 
 	/// Annualised base payroll in constant currency. Constant, not actual, so a currency
@@ -41,8 +31,8 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
-		displayFolder: 01 Base
 		formatString: $#,##0
+		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000002
 
 	/// Mean base salary. Blank below five employees: a group that small is identifiable
@@ -50,9 +40,9 @@ table _Measures
 	measure 'Average Base Salary USD' =
 			VAR Population = [Headcount]
 			RETURN
-			    IF ( Population >= 5, DIVIDE ( [Annualised Payroll USD], Population ) )
-		displayFolder: 01 Base
+			    IF ( Population >= 5 || [_Has Compensation Access], DIVIDE ( [Annualised Payroll USD], Population ) )
 		formatString: $#,##0
+		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000003
 
 	/// Median base salary. Less distorted by a handful of senior salaries than the mean,
@@ -61,11 +51,11 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    IF (
-			        [Headcount] >= 5,
+			        [Headcount] >= 5 || [_Has Compensation Access],
 			        CALCULATE ( MEDIANX ( Facts_HeadCount, Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
 			    )
-		displayFolder: 01 Base
 		formatString: $#,##0
+		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000004
 
 	/// Base pay against the market midpoint, weighted by population. Never an average of
@@ -76,9 +66,9 @@ table _Measures
 			VAR Pay = CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
 			VAR Market = CALCULATE ( SUMX ( Facts_HeadCount, RELATED ( Dim_Market_Band[band_mid_usd] ) ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
-			    IF ( [Headcount] >= 5, DIVIDE ( Pay, Market ) )
-		displayFolder: 02 Pay position
+			    IF ( [Headcount] >= 5 || [_Has Compensation Access], DIVIDE ( Pay, Market ) )
 		formatString: 0.00
+		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000005
 
 	/// Total target cash - base plus variable - against the market equivalent. This is the
@@ -93,9 +83,9 @@ table _Measures
 			        Dim_Date[date_key] = LastSnapshot
 			    )
 			RETURN
-			    IF ( [Headcount] >= 5, DIVIDE ( Cash, Market ) )
-		displayFolder: 02 Pay position
+			    IF ( [Headcount] >= 5 || [_Has Compensation Access], DIVIDE ( Cash, Market ) )
 		formatString: 0.00
+		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000006
 
 	/// Share of the population paid below the band minimum.
@@ -107,9 +97,9 @@ table _Measures
 			        Dim_Date[date_key] = LastSnapshot
 			    )
 			RETURN
-			    IF ( [Headcount] >= 5, DIVIDE ( Below, [Headcount] ) )
-		displayFolder: 02 Pay position
+			    IF ( [Headcount] >= 5 || [_Has Compensation Access], DIVIDE ( Below, [Headcount] ) )
 		formatString: 0.0%
+		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000007
 
 	/// Share paid above the band maximum. The mirror of the measure above, and the one
@@ -122,15 +112,15 @@ table _Measures
 			        Dim_Date[date_key] = LastSnapshot
 			    )
 			RETURN
-			    IF ( [Headcount] >= 5, DIVIDE ( Above, [Headcount] ) )
-		displayFolder: 02 Pay position
+			    IF ( [Headcount] >= 5 || [_Has Compensation Access], DIVIDE ( Above, [Headcount] ) )
 		formatString: 0.0%
+		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000008
 
 	/// Share sitting inside the band. The three shares sum to one.
-	measure '% In Band' = IF ( [Headcount] >= 5, 1 - [% Below Band Minimum] - [% Above Band Maximum] )
-		displayFolder: 02 Pay position
+	measure '% In Band' = IF ( [Headcount] >= 5 || [_Has Compensation Access], 1 - [% Below Band Minimum] - [% Above Band Maximum] )
 		formatString: 0.0%
+		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000009
 
 	/// Where the population sits inside its own city, job and level cohort, independent of
@@ -139,51 +129,51 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( AVERAGE ( Facts_HeadCount[peer_percentile] ), Dim_Date[date_key] = LastSnapshot )
-		displayFolder: 02 Pay position
 		formatString: 0.00
+		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000010
 
 	/// Voluntary departures over the trailing twelve months.
 	measure 'Voluntary Exits LTM' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
-			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
 			    CALCULATE (
 			        COUNTROWS ( Facts_Movement ),
 			        Facts_Movement[event_type] = "Voluntary Exit",
-			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			        DATESINPERIOD ( Dim_Date[date], LastSnapshotDate, -12, MONTH )
 			    )
-		displayFolder: 03 Movement
 		formatString: #,##0
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000011
 
 	/// Involuntary departures over the trailing twelve months. Kept separate on purpose:
 	/// one attrition figure hides whether people are leaving or being asked to leave.
 	measure 'Involuntary Exits LTM' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
-			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
 			    CALCULATE (
 			        COUNTROWS ( Facts_Movement ),
 			        Facts_Movement[event_type] = "Involuntary Exit",
-			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			        DATESINPERIOD ( Dim_Date[date], LastSnapshotDate, -12, MONTH )
 			    )
-		displayFolder: 03 Movement
 		formatString: #,##0
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000012
 
 	/// Hires over the trailing twelve months.
 	measure 'Hires LTM' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
-			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
 			    CALCULATE (
 			        COUNTROWS ( Facts_Movement ),
 			        Facts_Movement[event_type] = "Hire",
-			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			        DATESINPERIOD ( Dim_Date[date], LastSnapshotDate, -12, MONTH )
 			    )
-		displayFolder: 03 Movement
 		formatString: #,##0
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000013
 
 	/// Average headcount across the trailing twelve months. The denominator of the attrition
@@ -191,47 +181,47 @@ table _Measures
 	/// it in a shrinking one.
 	measure 'Average Headcount LTM' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
-			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
 			    CALCULATE (
 			        DIVIDE ( COUNTROWS ( Facts_HeadCount ), 12 ),
-			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			        DATESINPERIOD ( Dim_Date[date], LastSnapshotDate, -12, MONTH )
 			    )
+		formatString: 0.00
 		displayFolder: 03 Movement
-		formatString: #,##0
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000014
 
 	/// Voluntary attrition over the trailing twelve months.
 	measure 'Voluntary Attrition % LTM' = DIVIDE ( [Voluntary Exits LTM], [Average Headcount LTM] )
-		displayFolder: 03 Movement
 		formatString: 0.0%
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000015
 
 	/// The company-wide attrition rate, unaffected by what is filtered. Every segment is
 	/// judged against this, so it has to ignore the current selection.
 	measure 'Company Attrition Baseline' = CALCULATE ( DIVIDE ( [Voluntary Exits LTM], [Average Headcount LTM] ), REMOVEFILTERS () )
-		displayFolder: 03 Movement
 		formatString: 0.0%
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000016
 
 	/// How far the selection sits above or below the company rate. Above 1 means losing
 	/// people faster than the company as a whole.
 	measure 'Attrition vs Baseline' = DIVIDE ( [Voluntary Attrition % LTM], [Company Attrition Baseline] )
-		displayFolder: 03 Movement
 		formatString: 0.00
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000017
 
 	/// Mean tenure in years at the latest month-end.
 	measure 'Average Tenure Years' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
-			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
 			    CALCULATE (
-			        AVERAGEX ( Facts_HeadCount, DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastDate, DAY ) / 365.25 ),
+			        AVERAGEX ( Facts_HeadCount, DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastSnapshotDate, DAY ) / 365.25 ),
 			        Dim_Date[date_key] = LastSnapshot
 			    )
-		displayFolder: 03 Movement
 		formatString: 0.0
+		displayFolder: 03 Movement
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000018
 
 	/// Direct reports per manager, seen from the employee's side: the average employee's
@@ -241,15 +231,15 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( AVERAGE ( Facts_HeadCount[span_of_manager] ), Dim_Date[date_key] = LastSnapshot )
-		displayFolder: 04 Organisation
 		formatString: 0.0
+		displayFolder: 04 Organisation
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000019
 
 	/// The company-wide span, ignoring the current selection. A segment is only
 	/// organisationally unusual relative to the rest of the company.
 	measure 'Company Span Baseline' = CALCULATE ( [Average Span of Control], REMOVEFILTERS () )
-		displayFolder: 04 Organisation
 		formatString: 0.0
+		displayFolder: 04 Organisation
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000020
 
 	/// Annualised cost of lifting everyone below the band minimum up to it. The numerator
@@ -261,8 +251,8 @@ table _Measures
 			        SUMX ( Facts_HeadCount, MAX ( RELATED ( Dim_Market_Band[band_min_usd] ) - Facts_HeadCount[base_salary_usd_constant], 0 ) ),
 			        Dim_Date[date_key] = LastSnapshot
 			    )
-		displayFolder: 05 Economics
 		formatString: $#,##0
+		displayFolder: 05 Economics
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000021
 
 	/// Cost of replacing someone, as a multiple of annual salary: recruitment, interview
@@ -285,15 +275,15 @@ table _Measures
 			        ),
 			        Dim_Date[date_key] = LastSnapshot
 			    )
-		displayFolder: 05 Economics
 		formatString: 0.00
+		displayFolder: 05 Economics
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000022
 
 	/// What the current attrition rate costs over the next twelve months if nothing changes.
 	/// This is what a pay adjustment is weighed against.
 	measure 'Attrition Exposure USD' = [Voluntary Exits LTM] * [Average Base Salary USD] * [Replacement Factor]
-		displayFolder: 05 Economics
 		formatString: $#,##0
+		displayFolder: 05 Economics
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000023
 
 	/// Months for the adjustment to pay for itself, assuming it brings attrition down to the
@@ -304,8 +294,8 @@ table _Measures
 			VAR AvoidedExposure = DIVIDE ( ExcessRate, [Voluntary Attrition % LTM] ) * [Attrition Exposure USD]
 			RETURN
 			    IF ( ExcessRate > 0, DIVIDE ( [Cost to Band Minimum], DIVIDE ( AvoidedExposure, 12 ) ) )
-		displayFolder: 05 Economics
 		formatString: 0.0
+		displayFolder: 05 Economics
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000024
 
 	/// Payroll at the exchange rate of each month. Reconciles to Finance, and is the only
@@ -314,16 +304,248 @@ table _Measures
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_actual] ), Dim_Date[date_key] = LastSnapshot )
-		displayFolder: 06 Currency
 		formatString: $#,##0
+		displayFolder: 06 Currency
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000025
 
 	/// The part of the payroll movement nobody in the company controls. Splitting it out is
 	/// what stops a currency movement being read as a pay decision.
 	measure 'Currency Effect USD' = [Payroll USD Actual] - [Annualised Payroll USD]
-		displayFolder: 06 Currency
 		formatString: $#,##0
+		displayFolder: 06 Currency
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000026
+
+	/// TRUE when the signed-in user is listed with CompensationAccess in Dim_Security.
+	/// The minimum group size rule protects individuals from being identified through a
+	/// small group; a compensation analyst is the one role whose job requires seeing
+	/// exactly that, so the exemption is data-driven rather than a role name in DAX.
+	measure '_Has Compensation Access' =
+			NOT ISEMPTY (
+			    FILTER (
+			        ALL ( Dim_Security ),
+			        Dim_Security[user_email] = LOWER ( USERPRINCIPALNAME () )
+			            && Dim_Security[scope_type] = "CompensationAccess"
+			    )
+			)
+		formatString: """""""TRUE"""""";;""""""FALSE"""""""
+		isHidden
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000099
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	/// The voluntary exits this segment would have produced over the last twelve months
+	/// if it had run at the company rate. It exists to be compared against the actual
+	/// count, and for nothing else.
+	measure 'Expected Exits LTM' = [Company Attrition Baseline] * [Average Headcount LTM]
+		formatString: 0.0000
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000030
+
+	/// One-sided Poisson probability of seeing this many voluntary exits, or more, if the
+	/// segment ran at the company rate. Below 0.05 the gap is not comfortably explained by
+	/// chance. This replaces the "1.5x the baseline" rule of thumb, which on a segment of
+	/// thirty people fires on noise 22% of the time — the arithmetic is tabulated in
+	/// docs/case/detection-rule.md.
+	/// 
+	/// DAX has no Poisson function, so the exact tail is summed term by term:
+	/// P(X >= x) = 1 - SUM over k = 0..x-1 of EXP( -lambda + k*LN(lambda) - LN(k!) )
+	/// Working in logarithms keeps every term inside floating-point range, and LN(k!) comes
+	/// from the LnFactorial helper table. Agreement with a second, independent implementation is 1e-12 across
+	/// all 745 cells, which tests/test_reconciliation.py checks rather than assumes.
+	measure 'Attrition p-value' =
+			VAR Lambda = [Expected Exits LTM]
+			VAR Observed = [Voluntary Exits LTM]
+			VAR LargestK = MAXX ( ALL ( LnFactorial ), LnFactorial[k] )
+			VAR CumulativeBelow =
+			    SUMX (
+			        FILTER ( ALL ( LnFactorial ), LnFactorial[k] <= Observed - 1 ),
+			        EXP ( -Lambda + LnFactorial[k] * LN ( Lambda ) - LnFactorial[ln_factorial] )
+			    )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Lambda ) || Lambda <= 0, BLANK (),
+			        ISBLANK ( Observed ) || Observed <= 0, 1,
+			        Observed - 1 > LargestK, BLANK (),
+			        MIN ( MAX ( 1 - CumulativeBelow, 0 ), 1 )
+			    )
+		formatString: 0.000000
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000031
+
+	/// Employees with three or more years of service who carry a peer percentile. Rule 2
+	/// compares cohorts rather than the segment average, because salary compression is
+	/// invisible in the average by construction: the incumbents who have fallen behind and
+	/// the recent hires who passed them cancel out.
+	/// Rows with no peer percentile are excluded, not counted as zero — the percentile is
+	/// suppressed in SQL wherever the peer group is under five people.
+	measure 'Incumbent Headcount' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        COUNTROWS (
+			            FILTER (
+			                Facts_HeadCount,
+			                NOT ISBLANK ( Facts_HeadCount[peer_percentile] )
+			                    && DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastSnapshotDate, DAY ) >= 3 * 365.25
+			            )
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: 0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000032
+
+	/// Employees with less than three years of service who carry a peer percentile. The
+	/// other half of the cohort split; both sides need twenty people before the comparison
+	/// is worth making.
+	measure 'Recent Hire Headcount' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        COUNTROWS (
+			            FILTER (
+			                Facts_HeadCount,
+			                NOT ISBLANK ( Facts_HeadCount[peer_percentile] )
+			                    && DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastSnapshotDate, DAY ) < 3 * 365.25
+			            )
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: 0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000033
+
+	/// Where the long-tenured cohort sits inside its own city, job and level peer group.
+	/// Peer percentile rather than compa-ratio on purpose: this asks whether incumbents have
+	/// fallen behind the people beside them, which is a question about internal fairness and
+	/// has nothing to do with the market band.
+	measure 'Incumbent Peer Percentile' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        AVERAGEX (
+			            FILTER (
+			                Facts_HeadCount,
+			                DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastSnapshotDate, DAY ) >= 3 * 365.25
+			            ),
+			            Facts_HeadCount[peer_percentile]
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: 0.0000
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000034
+
+	/// Where the recent-hire cohort sits inside the same peer group. A gap of fifteen points
+	/// or more against the incumbents is what rule 2 is looking for.
+	measure 'Recent Hire Peer Percentile' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        AVERAGEX (
+			            FILTER (
+			                Facts_HeadCount,
+			                DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastSnapshotDate, DAY ) < 3 * 365.25
+			            ),
+			            Facts_HeadCount[peer_percentile]
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: 0.0000
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000035
+
+	/// Rule 1. Fires where the segment is materially sized, its attrition is distinguishable
+	/// from the baseline, total target cash sits below 0.92, and span of control rules out an
+	/// organisational explanation.
+	/// Total cash, not base salary. This is the single most consequential line in the model:
+	/// base pay alone flags São Paulo Sales at 0.88, a population whose 41% variable target
+	/// puts its total cash at 0.99 and whose attrition sits below its own region's.
+	/// The p-value is tested for blank explicitly — in DAX a blank compares as zero, so an
+	/// unguarded "< 0.05" would fire on every segment that has no p-value at all.
+	measure 'Flag Pay Adjustment' =
+			VAR Significant =
+			    [Average Headcount LTM] >= 30
+			        && NOT ISBLANK ( [Attrition p-value] )
+			        && [Attrition p-value] < 0.05
+			RETURN
+			    INT (
+			        Significant
+			            && [Weighted Average TTC Compa-Ratio] < 0.92
+			            && [Average Span of Control] <= [Company Span Baseline] * 1.5
+			    )
+		formatString: 0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000036
+
+	/// Rule 2. Fires where both tenure cohorts are at least twenty people, the incumbents sit
+	/// at or below the 35th peer percentile and the recent hires at or above the 65th.
+	/// No significance test here: this compares positions inside a fixed population rather
+	/// than a rate estimated from counts, so Poisson noise does not apply. Nor is attrition a
+	/// condition — the point of rule 2 is to catch the problem before attrition reacts.
+	measure 'Flag Internal Equity' =
+			INT (
+			    [Incumbent Headcount] >= 20
+			        && [Recent Hire Headcount] >= 20
+			        && [Incumbent Peer Percentile] <= 0.35
+			        && [Recent Hire Peer Percentile] >= 0.65
+			)
+		formatString: 0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000037
+
+	/// Rule 3. Fires where attrition is real and significant, pay is demonstrably not the
+	/// explanation — total target cash at or above 0.95 — and span of control exceeds 1.5x the
+	/// company mean. The recommendation this produces is a supervisory layer, not money.
+	/// Without this rule the analysis has only one lever, and every problem starts to look
+	/// like a pay problem.
+	measure 'Flag Organisational' =
+			VAR Significant =
+			    [Average Headcount LTM] >= 30
+			        && NOT ISBLANK ( [Attrition p-value] )
+			        && [Attrition p-value] < 0.05
+			RETURN
+			    INT (
+			        Significant
+			            && [Weighted Average TTC Compa-Ratio] >= 0.95
+			            && [Average Span of Control] > [Company Span Baseline] * 1.5
+			    )
+		formatString: 0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000038
+
+	/// The rules that fired, as text, for the report. Blank where none did.
+	/// A segment can trip more than one rule; listing all of them is more honest than picking
+	/// a winner by an arbitrary priority order and hiding the fact that two diagnoses apply.
+	measure 'Detection Rule Fired' =
+			VAR Fired =
+			    FILTER (
+			        {
+			            ( "Pay adjustment", [Flag Pay Adjustment] ),
+			            ( "Internal equity", [Flag Internal Equity] ),
+			            ( "Organisational", [Flag Organisational] )
+			        },
+			        [Value2] = 1
+			    )
+			RETURN
+			    CONCATENATEX ( Fired, [Value1], " + " )
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000039
+
+	column Value
+		isHidden
+		formatString: 0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a02
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
 
 	partition _Measures = calculated
 		mode: import

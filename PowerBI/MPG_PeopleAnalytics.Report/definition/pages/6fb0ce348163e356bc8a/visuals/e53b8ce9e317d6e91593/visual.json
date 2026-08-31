@@ -1,0 +1,581 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "e53b8ce9e317d6e91593",
+  "position": {
+    "x": 0,
+    "y": 201.82572614107883,
+    "z": 1,
+    "height": 406.30705394190869,
+    "width": 1920,
+    "tabOrder": 1
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Location"
+                    }
+                  },
+                  "Property": "city"
+                }
+              },
+              "queryRef": "Dim_Location.city",
+              "nativeQueryRef": "city"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Job"
+                    }
+                  },
+                  "Property": "job_code"
+                }
+              },
+              "queryRef": "Dim_Job.job_code",
+              "nativeQueryRef": "job_code"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Job"
+                    }
+                  },
+                  "Property": "job_level"
+                }
+              },
+              "queryRef": "Dim_Job.job_level",
+              "nativeQueryRef": "job_level"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Headcount"
+                }
+              },
+              "queryRef": "_Measures.Headcount",
+              "nativeQueryRef": "Headcount"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Average Headcount LTM"
+                }
+              },
+              "queryRef": "_Measures.Average Headcount LTM",
+              "nativeQueryRef": "Average Headcount LTM"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Voluntary Exits LTM"
+                }
+              },
+              "queryRef": "_Measures.Voluntary Exits LTM",
+              "nativeQueryRef": "Voluntary Exits LTM"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Expected Exits LTM"
+                }
+              },
+              "queryRef": "_Measures.Expected Exits LTM",
+              "nativeQueryRef": "Expected Exits LTM"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Attrition vs Baseline"
+                }
+              },
+              "queryRef": "_Measures.Attrition vs Baseline",
+              "nativeQueryRef": "Attrition vs Baseline"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Attrition p-value"
+                }
+              },
+              "queryRef": "_Measures.Attrition p-value",
+              "nativeQueryRef": "Attrition p-value"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Weighted Average TTC Compa-Ratio"
+                }
+              },
+              "queryRef": "_Measures.Weighted Average TTC Compa-Ratio",
+              "nativeQueryRef": "Weighted Average TTC Compa-Ratio"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Average Span of Control"
+                }
+              },
+              "queryRef": "_Measures.Average Span of Control",
+              "nativeQueryRef": "Average Span of Control"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Incumbent Headcount"
+                }
+              },
+              "queryRef": "_Measures.Incumbent Headcount",
+              "nativeQueryRef": "Incumbent Headcount"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Incumbent Peer Percentile"
+                }
+              },
+              "queryRef": "_Measures.Incumbent Peer Percentile",
+              "nativeQueryRef": "Incumbent Peer Percentile"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Recent Hire Headcount"
+                }
+              },
+              "queryRef": "_Measures.Recent Hire Headcount",
+              "nativeQueryRef": "Recent Hire Headcount"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Recent Hire Peer Percentile"
+                }
+              },
+              "queryRef": "_Measures.Recent Hire Peer Percentile",
+              "nativeQueryRef": "Recent Hire Peer Percentile"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Flag Pay Adjustment"
+                }
+              },
+              "queryRef": "_Measures.Flag Pay Adjustment",
+              "nativeQueryRef": "Flag Pay Adjustment"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Flag Internal Equity"
+                }
+              },
+              "queryRef": "_Measures.Flag Internal Equity",
+              "nativeQueryRef": "Flag Internal Equity"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Flag Organisational"
+                }
+              },
+              "queryRef": "_Measures.Flag Organisational",
+              "nativeQueryRef": "Flag Organisational"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "0958bd9628b0827be4b0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dim_Location"
+              }
+            },
+            "Property": "city"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "976a43a86f7fd7299fe4",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dim_Job"
+              }
+            },
+            "Property": "job_code"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "0f37f078ae8e14ea5aac",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Dim_Job"
+              }
+            },
+            "Property": "job_level"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "46c4fff2180c32099f60",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Headcount"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3af61faeaccd933356f3",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Average Headcount LTM"
+          }
+        },
+        "type": "Advanced",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "_",
+              "Entity": "_Measures",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Comparison": {
+                  "ComparisonKind": 2,
+                  "Left": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Source": "_"
+                        }
+                      },
+                      "Property": "Average Headcount LTM"
+                    }
+                  },
+                  "Right": {
+                    "Literal": {
+                      "Value": "30L"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "a0fbdf5a2662d6fa6943",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Voluntary Exits LTM"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "abbe888e33d5a948bca8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Expected Exits LTM"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "cc23ae24a9779e6211f2",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Attrition vs Baseline"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "12cc7e59596ddf1090e1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Attrition p-value"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "935a5874138ce84392fe",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Weighted Average TTC Compa-Ratio"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "93de3bcfee656a20fc03",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Average Span of Control"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "bfd4fec84542c052193b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Incumbent Headcount"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "27af76caf64086a382bb",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Incumbent Peer Percentile"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "3e1b4b8e072421ac6ed1",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Recent Hire Headcount"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "a9cdbf5d9c094924d58c",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Recent Hire Peer Percentile"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "95cde49e97023c2565b8",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Flag Pay Adjustment"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "82e49add629d474adead",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Flag Internal Equity"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "5a23d8b07df7e32b0b58",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Flag Organisational"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

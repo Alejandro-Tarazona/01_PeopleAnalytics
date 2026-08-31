@@ -3,12 +3,16 @@
 How a segment gets prioritised, why each threshold is what it is, and how the
 logic is scored.
 
-This is the **specification**. It is implemented as DAX measures in the semantic
-model, and scored against [`ground_truth.json`](./ground_truth.json) in block 6.
+This is the **specification**, and it is implemented twice on purpose: as DAX
+measures in the semantic model (`_Measures.tmdl`, display folder *07 Detection*)
+and as a reference implementation in `validation/reference_rule.py`. The two are
+required to agree cell for cell before either is scored against
+[`ground_truth.json`](./ground_truth.json).
 
 Findings come from the model. Python's role in this repository is validation
-only: in block 6 it mirrors this rule as a reference implementation so the
-model's output can be measured rather than asserted.
+only: it mirrors this rule so the model's output can be measured rather than
+asserted. How that works, and what it does not prove:
+[`reconciliation.md`](./reconciliation.md).
 
 ---
 
@@ -18,7 +22,7 @@ model's output can be measured rather than asserted.
 cannot be repeated by a colleague, and it cannot be wrong in a way anyone can
 demonstrate. Writing the decision down as an explicit rule makes it all three.
 
-The rule scans **every city × job × level cell in the organisation** — 722 of
+The rule scans **every city × job × level cell in the organisation** — 746 of
 them, of which 11 clear the materiality floor. It does not know the four designed segments exist. That is what makes the
 score meaningful: the logic is not being tested on the answers it was built from.
 
@@ -146,9 +150,20 @@ warranted, yet a rule should still fire on it — the organisational one.
 Dismissing for pay and detecting as an org problem are the same correct answer
 expressed two ways, so scoring runs off `expected_rule`, not the verdict.
 
-**Target: segment C flagged by nothing, and no cell outside a designed segment
-flagged** — the control against the 3 % of employees carrying random pay
-deviation. Measured results are reported once the DAX implementation exists.
+**Measured: precision 100 %, recall 100 %.** Eleven of 746 cells clear the
+materiality floor; four rules fire across them, and every one falls inside the
+segment that expects it. Segment C is flagged by nothing, and nothing outside a
+designed segment is flagged — the control against the 3 % of employees carrying
+random pay deviation holds.
+
+The near misses are more informative than the hits. Bogotá OPS IC3 and São Paulo
+SAL IC3 both run at 1.69× the baseline on thirty-five people, and both fail the
+significance test at *p* = 0.107. Under the "1.5× the baseline" threshold this
+rule started with, both would have been flagged. Two false positives avoided by
+one line of arithmetic.
+
+Full results, and the reconciliation that makes them checkable rather than
+asserted: [`reconciliation.md`](./reconciliation.md).
 
 ---
 

@@ -1,0 +1,5 @@
+role 'Global HR'
+	modelPermission: read
+
+	annotation PBI_Id = 37328ff78f364583b1fee6bbb62dffe9
+

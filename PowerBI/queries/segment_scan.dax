@@ -1,0 +1,68 @@
+// =============================================================================
+// segment_scan.dax — the definition of data/exports/segment_scan_pbi.csv
+// =============================================================================
+// This is what the model is asked for, written down. The export that the
+// reconciliation reads must be this query's result and nothing else: same
+// grain, same columns, same filter.
+//
+// Two ways to run it, and they give the same answer:
+//
+//   1. Power BI Desktop → DAX query view → open this file → Run.
+//      Useful for reading the numbers and for anyone with an XMLA endpoint who
+//      wants to automate the export.
+//
+//   2. The "Segment scan (export)" page in the report → the table visual →
+//      "Export data" → "Data with current layout" → .csv.
+//      This is the route used here, because it needs no Premium capacity.
+//      docs/case/reconciliation.md explains why that limitation exists and
+//      what it costs.
+//
+// The materiality filter is part of the definition, not a convenience. A rule
+// that cannot act below thirty people has no business reporting on cells below
+// thirty people, and 745 rows of noise would bury the eleven that matter.
+// =============================================================================
+
+// One note on the shape below. The materiality filter is applied through a table
+// variable and a qualified column reference — Scan[Average Headcount LTM] — rather
+// than the bare [Average Headcount LTM]. Inside FILTER, a bare reference is
+// ambiguous between the measure and the SUMMARIZECOLUMNS column that shares its
+// name, and the measure would re-evaluate without the row's filter context: every
+// row would be compared against the company total and the filter would let all 745
+// through. Qualifying it removes the ambiguity entirely.
+
+DEFINE
+    VAR Scan =
+        SUMMARIZECOLUMNS (
+            Dim_Location[city],
+            Dim_Job[job_code],
+            Dim_Job[job_level],
+
+            // --- Population and exposure ---------------------------------------
+            "Headcount",                          [Headcount],
+            "Average Headcount LTM",              [Average Headcount LTM],
+
+            // --- Attrition and its significance --------------------------------
+            "Voluntary Exits LTM",                [Voluntary Exits LTM],
+            "Expected Exits LTM",                 [Expected Exits LTM],
+            "Attrition vs Baseline",              [Attrition vs Baseline],
+            "Attrition p-value",                  [Attrition p-value],
+
+            // --- Pay position and organisation ---------------------------------
+            "Weighted Average TTC Compa-Ratio",   [Weighted Average TTC Compa-Ratio],
+            "Average Span of Control",            [Average Span of Control],
+
+            // --- The tenure cohorts rule 2 compares ----------------------------
+            "Incumbent Headcount",                [Incumbent Headcount],
+            "Incumbent Peer Percentile",          [Incumbent Peer Percentile],
+            "Recent Hire Headcount",              [Recent Hire Headcount],
+            "Recent Hire Peer Percentile",        [Recent Hire Peer Percentile],
+
+            // --- The verdict ---------------------------------------------------
+            "Flag Pay Adjustment",                [Flag Pay Adjustment],
+            "Flag Internal Equity",               [Flag Internal Equity],
+            "Flag Organisational",                [Flag Organisational]
+        )
+
+EVALUATE
+FILTER ( Scan, Scan[Average Headcount LTM] >= 30 )
+ORDER BY [city], [job_code], [job_level]

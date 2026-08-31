@@ -1,0 +1,15 @@
+role 'Regional HRBP'
+	modelPermission: read
+
+	tablePermission Dim_Location =
+			CONTAINS (
+			    FILTER (
+			        Dim_Security,
+			        Dim_Security[user_email] = LOWER ( USERPRINCIPALNAME () )
+			            && Dim_Security[scope_type] = "Region"
+			    ),
+			    Dim_Security[scope_value], Dim_Location[region]
+			)
+
+	annotation PBI_Id = c2e9a0401599495ebf5e80e3d71250be
+

@@ -33,6 +33,7 @@ UNION ALL SELECT 'd_org',       count(*) FROM analytics.d_org
 UNION ALL SELECT 'd_location',  count(*) FROM analytics.d_location
 UNION ALL SELECT 'd_company',   count(*) FROM analytics.d_company
 UNION ALL SELECT 'd_fx_rate',   count(*) FROM analytics.d_fx_rate
+UNION ALL SELECT 'd_security',  count(*) FROM analytics.d_security
 UNION ALL SELECT 'f_headcount', count(*) FROM analytics.f_headcount
 UNION ALL SELECT 'f_movement',  count(*) FROM analytics.f_movement
 ORDER BY 1;

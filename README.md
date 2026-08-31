@@ -58,9 +58,9 @@ purpose.
 | 1 · Source data and case design | **Complete** |
 | 2 · SQL layer (PostgreSQL) | **Complete** |
 | 3 · Data validation suite | **Complete** |
-| 4 · Semantic model (PBIP/TMDL), Power Query cleansing and DAX measures | Pending |
-| 5 · Hierarchical RLS and minimum group size rule | Pending |
-| 6 · Python ↔ DAX reconciliation and detection scoring | Pending |
+| 4 · Semantic model (PBIP/TMDL), Power Query cleansing and DAX measures | **Complete** |
+| 5 · Hierarchical RLS and minimum group size rule | **Complete** |
+| 6 · Python ↔ DAX reconciliation and detection scoring | **Complete** |
 | 7 · Three-page report | Pending |
 | 8 · Executive presentation | Pending |
 
@@ -148,26 +148,35 @@ produced and compares. **It does not produce findings** — those come from the
 semantic model, and Python's role is to make the model's output checkable rather
 than merely asserted.
 
-Two levels today, 29 tests:
+Three levels, 63 tests:
 
 | Level | What it proves |
 |---|---|
 | **Source** | Referential integrity, unique grain, closed domains, temporal coherence, and that the vendor survey was cleansed correctly — footer removed, duplicates dropped, `$120,000` parsed, `IC 3` normalised |
-| **Transformation** | Every derived value recomputed independently in pandas from the source files and compared against SQL: currency conversion, span of control, target cash, the five-peer suppression rule |
+| **Transformation** | Every derived value recomputed independently in pandas from the source files and compared against SQL: currency conversion, span of control, target cash, the five-peer suppression rule, and that every source movement is either loaded or explained |
+| **Reconciliation** | The Poisson tail itself, by two algorithms that share no arithmetic; then the DAX implementation of the prioritisation rule against a second implementation of the same specification in pandas — ten inputs and three verdicts, cell by cell — and then that implementation scored against the answer key |
 
 This is double-entry bookkeeping applied to data: two independent
 implementations of the same calculation that must agree. It is the cheapest
 insurance against the most expensive failure in BI, which is reporting a number
 that does not match the source.
 
-A third level arrives in block 6. Once the prioritisation rule exists as DAX
-measures, its output is scored against the answer key in
-[`ground_truth.json`](docs/case/ground_truth.json) and reported as precision and
-recall — the reason this project uses synthetic data in the first place.
+**It has earned its keep.** The reconciliation found that the movement fact
+carried no dimension keys, so attrition sliced by city was returning the *company*
+total for every city — a wrong number that looks entirely plausible and was on its
+way into the report. Fixing that introduced a silent 77-row drop, and the tie-out
+then caught a single lost exit, one row in 599, that moved the company attrition
+baseline in the fourth decimal.
+[`docs/case/reconciliation.md`](docs/case/reconciliation.md) has the details, the
+method, and what the arrangement does **not** prove.
 
 ```bash
 pytest
 ```
+
+The 21 reconciliation tests skip with instructions until the model has been
+refreshed and its scan exported to `data/exports/segment_scan_pbi.csv`; the other
+42 need only a built database.
 
 ---
 
@@ -176,8 +185,9 @@ pytest
 Which segments get recommended for action is an explicit, written rule rather
 than a judgement call over a dashboard: it can be reviewed, repeated by someone
 else, and shown to be wrong. It is specified in
-[`docs/case/detection-rule.md`](docs/case/detection-rule.md) and implemented as
-DAX measures in the semantic model.
+[`docs/case/detection-rule.md`](docs/case/detection-rule.md) and implemented
+twice: as DAX measures in the semantic model, and as a reference implementation
+in `validation/reference_rule.py` that exists only to check them.
 
 Three problems need three different answers, so there are three rules: **pay
 adjustment** (genuinely below market on total cash, with attrition to match),
@@ -190,7 +200,19 @@ whose price is a raise for a population that was never underpaid.
 
 An earlier draft used "attrition ≥ 1.5× the baseline". It was replaced by a
 one-sided Poisson test, because at a 13.5 % baseline a 1.5× reading on thirty
-people has a **22 % chance of being noise**.
+people has a **22 % chance of being noise**. DAX has no Poisson function, so the
+exact tail is summed in logarithms against a disconnected table of ln(k!), and
+checked against two independent implementations in `validation/poisson.py` that
+agree to 1e-12. The repository depends on pandas, openpyxl, psycopg and pytest —
+scipy was removed once it turned out not to import on a machine with Windows
+Application Control enabled, which is exactly the kind of machine a reviewer has.
+
+Scanned against the answer key: **precision 100 %, recall 100 %.** Eleven of 746
+cells clear the materiality floor and four rules fire, each inside the segment
+that expects it. The near misses matter more than the hits — Bogotá Operations
+and São Paulo Sales both run at 1.69× the baseline on thirty-five people, and the
+significance test stops both at *p* = 0.107. Under the threshold this rule started
+with, both would have been recommended for a raise.
 
 ---
 
@@ -222,7 +244,7 @@ assumption and test its sensitivity**: the recommendation is evaluated at 1.0× 
 |---|---|
 | Gender pay-gap analysis | Requires multivariate statistical control. On synthetic data the result would not be interpretable, so the dimension exists in the model as an attribute but is not analysed. |
 | CI/CD and Best Practice Analyzer | High value, outside the time budget. First candidate for extension. |
-| Fabric deployment / XMLA endpoint | Requires Premium capacity, unavailable in a personal environment. Quality gates run locally. |
+| Fabric deployment / XMLA endpoint | Requires Premium capacity, unavailable in a personal environment. Its absence is why the reconciliation reads an exported file rather than querying the model live — [`reconciliation.md`](docs/case/reconciliation.md) sets out exactly what that costs. |
 | Licensed salary survey data | Proprietary. Bands are synthetic and calibrated against public cost-of-labour indices. |
 
 ---
@@ -237,8 +259,9 @@ extracts arrive verbatim, `analytics` is the consumption layer Power BI reads.
 | `00_schema.sql` | Schemas, dropped and recreated so the build is idempotent |
 | `01_load_raw.sql` | Typed landing tables and the `\copy` of six extracts |
 | `02_dimensions.sql` | `d_date`, `d_employee`, `d_job`, `d_org`, `d_location`, `d_company`, `d_fx_rate` — surrogate keys throughout |
-| `03_facts.sql` | `f_headcount` (employee × month) and `f_movement` (event), with span of control, currency conversion and internal pay position |
-| `04_grants.sql` | Read-only role for Power BI. Password passed in at run time, never committed |
+| `03_facts.sql` | `f_headcount` (employee × month) and `f_movement` (event), with span of control, currency conversion, internal pay position, and the dimension keys that fix each event to the position held when it happened |
+| `04_role.sql` | The read-only role Power BI connects with. Password passed in at run time, never committed |
+| `05_grants.sql` | Its privileges, re-applied by `build.sql` as the last step — `DROP SCHEMA ... CASCADE` takes every grant with it, so a rebuild would otherwise leave the report disconnected |
 
 **Nothing here is orphaned.** Every object in `analytics` is imported by the semantic
 model. There are no exploratory views: anything DAX can compute natively — medians,
@@ -270,9 +293,29 @@ psql -U postgres -c "CREATE DATABASE mpg_analytics WITH ENCODING 'UTF8' \
 # 2. Build it (from the repository root — \copy resolves paths from here)
 psql -U postgres -d mpg_analytics -v ON_ERROR_STOP=1 -f sql/build.sql
 
-# 3. Create the read-only role Power BI connects with
-psql -U postgres -d mpg_analytics -v reader_password='<your password>' -f sql/04_grants.sql
+# 3. Create the read-only role Power BI connects with (once)
+psql -U postgres -d mpg_analytics -v reader_password='<your password>' -f sql/04_role.sql
+
+# 4. Validate
+pytest
 ```
 
-The build takes a few seconds and is idempotent. Source data is committed; nothing
-needs to be generated.
+The build takes a few seconds and is idempotent, and it re-applies the reader's
+privileges every time, so a rebuild can never leave the report without access.
+Source data is committed; nothing needs to be generated.
+
+Step 3 comes after step 2 the first time only — the role has to exist before
+`build.sql` can grant to it, and from then on `build.sql` handles it.
+
+---
+
+## Documentation
+
+| Document | What it covers |
+|---|---|
+| [`docs/case/data-design.md`](docs/case/data-design.md) | How the source data was specified, and what was deliberately made dirty |
+| [`docs/case/detection-rule.md`](docs/case/detection-rule.md) | The prioritisation rule: every threshold and why it is what it is |
+| [`docs/case/reconciliation.md`](docs/case/reconciliation.md) | How the model's output is checked and scored, and what that does not prove |
+| [`docs/case/rls.md`](docs/case/rls.md) | Row-level security, the minimum group size rule, and the limits of both |
+| [`docs/pbi-model.md`](docs/pbi-model.md) | The semantic model: tables, relationships, and the reasoning behind each design decision |
+| [`CLAUDE.md`](CLAUDE.md) | Conventions this repository is held to |

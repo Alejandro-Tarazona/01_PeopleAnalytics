@@ -19,6 +19,6 @@ BEGIN
 END
 $$;
 
-ALTER ROLE mpg_reader WITH PASSWORD :'U&eU<AEF>Nkf8b_6';
+ALTER ROLE mpg_reader WITH PASSWORD :'reader_password';
 
 GRANT CONNECT ON DATABASE mpg_analytics TO mpg_reader;

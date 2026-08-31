@@ -6,9 +6,10 @@ tables, relationships and measures live in this repository as text and can be
 reviewed in a diff like any other code.
 
 ```
-report/MPG_PeopleAnalytics.pbip
-report/MPG_PeopleAnalytics.SemanticModel/definition/   ← TMDL: tables, relationships, measures
-report/MPG_PeopleAnalytics.Report/definition/          ← PBIR: pages and visuals
+PowerBI/MPG_PeopleAnalytics.pbip
+PowerBI/MPG_PeopleAnalytics.SemanticModel/definition/   ← TMDL: tables, relationships, measures
+PowerBI/MPG_PeopleAnalytics.Report/definition/          ← PBIR: pages and visuals
+PowerBI/queries/segment_scan.dax                        ← the export contract for block 6
 ```
 
 ---
@@ -17,12 +18,12 @@ report/MPG_PeopleAnalytics.Report/definition/          ← PBIR: pages and visua
 
 Two sources, and the split is deliberate.
 
-**PostgreSQL** supplies nine tables — the star schema built by `sql/build.sql`.
+**PostgreSQL** supplies ten tables — the star schema built by `sql/build.sql`.
 The model reads them with one-line queries (`SELECT * FROM analytics.Dim_Employee`).
 All the heavy work — joins, window functions, currency conversion, span of
 control — already happened in versioned SQL files where it can be tested.
 
-**One Excel file** supplies the tenth: the vendor salary survey, cleansed in
+**One Excel file** supplies one more: the vendor salary survey, cleansed in
 Power Query. It is the only source that does not come from the database, because
 it is the only one that does not belong there — a spreadsheet that arrives by
 email every year, dirty, is a Power Query problem, not a warehouse problem.
@@ -39,7 +40,7 @@ report consumes and nothing more.
 | Table | Grain | Rows | Source |
 |---|---|---:|---|
 | `Facts_HeadCount` | employee × month-end | 107,124 | PostgreSQL |
-| `Facts_Movement` | one row per event | 12,338 | PostgreSQL |
+| `Facts_Movement` | one row per event | 12,261 | PostgreSQL |
 | `Dim_Date` | one row per day | 1,096 | PostgreSQL |
 | `Dim_Employee` | one row per person, active or not | 6,009 | PostgreSQL |
 | `Dim_Job` | job code × level | 100 | PostgreSQL |
@@ -48,6 +49,14 @@ report consumes and nothing more.
 | `Dim_Company` | one row per legal entity | 7 | PostgreSQL |
 | `Dim_FX_Rate` | month × currency | 168 | PostgreSQL |
 | `Dim_Market_Band` | job code × level × geo tier | 400 | Excel, via Power Query |
+| `Dim_Security` | user × access scope | 10 | PostgreSQL |
+| `LnFactorial` | one row per integer 0–500 | 501 | Calculated in DAX |
+
+`Dim_Security` and `LnFactorial` are both hidden and neither is part of the star.
+The first drives row-level security ([`case/rls.md`](case/rls.md)); the second is a
+table of mathematical constants that exists only so the Poisson tail in
+`[Attrition p-value]` can be summed without a factorial overflowing a double. It is
+disconnected on purpose — no filter, slicer or security role should ever reach it.
 
 Two facts at different grains, and both are necessary. The snapshot answers
 *"how did we look in March?"*; the event table answers *"what changed between
@@ -70,7 +79,19 @@ dimension.
 | `Facts_HeadCount[band_key]` | `Dim_Market_Band[band_key]` |
 | `Facts_Movement[event_date_key]` | `Dim_Date[date_key]` |
 | `Facts_Movement[employee_key]` | `Dim_Employee[employee_key]` |
+| `Facts_Movement[job_key]` | `Dim_Job[job_key]` |
+| `Facts_Movement[org_key]` | `Dim_Organization[org_key]` |
+| `Facts_Movement[location_key]` | `Dim_Location[location_key]` |
+| `Facts_Movement[company_key]` | `Dim_Company[company_key]` |
 | `Dim_Date[date_key]` | `Dim_FX_Rate[date_key]` |
+
+**The movement fact carries its own dimension keys, and that is not optional.**
+The first version of this model related it to the employee and the date alone,
+which looks sufficient until somebody slices attrition by city: with no location
+on the event, every city returned the *company* total. A wrong number that looks
+entirely plausible. An event fact has to be conformed at the event — the keys are
+fixed to the position the person held when it happened, which is also the only
+correct attribution for a promotion or a transfer.
 
 Filter direction stays single everywhere. Bidirectional filtering solves one
 problem the day you turn it on and creates ambiguous results forever after.
@@ -238,7 +259,7 @@ psql -U postgres -d mpg_analytics -v ON_ERROR_STOP=1 -f sql/build.sql
 `File > Options and settings > Options > Preview features` →
 **Power BI Project (.pbip) save option**. Restart.
 
-**3. Open** `report/MPG_PeopleAnalytics.pbip`.
+**3. Open** `PowerBI/MPG_PeopleAnalytics.pbip`.
 
 **4. Point the parameter at your copy.** `Transform data > Manage parameters` →
 set `RepositoryFolder` to wherever the repository was cloned.

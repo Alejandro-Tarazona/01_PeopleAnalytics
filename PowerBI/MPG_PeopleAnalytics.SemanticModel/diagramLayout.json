@@ -4,7 +4,7 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 0,
+        "x": 311.83652742528733,
         "y": 0
       },
       "nodes": [
@@ -128,7 +128,7 @@
           "nodeIndex": "Facts_Movement",
           "nodeLineageTag": "f075166e-e012-4a43-8d03-edfa2e63877e",
           "size": {
-            "height": 128,
+            "height": 224,
             "width": 234
           },
           "zIndex": 8,
@@ -160,6 +160,32 @@
             "width": 234
           },
           "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 2536.408554098773,
+            "y": 0
+          },
+          "nodeIndex": "Dim_Security",
+          "nodeLineageTag": "c4459494-20d6-4932-ac79-d80a9e7e1a7a",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 2820.408554098773,
+            "y": 284.45018065880055
+          },
+          "nodeIndex": "LnFactorial",
+          "nodeLineageTag": "7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a10",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "Todas las tablas",

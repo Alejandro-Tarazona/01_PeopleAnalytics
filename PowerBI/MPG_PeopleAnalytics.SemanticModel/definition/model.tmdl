@@ -21,7 +21,7 @@ queryGroup 'Factual Tables'
 
 annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBI_QueryOrder = ["RepositoryFolder","Dim_Employee","Dim_Date","Dim_Job","Dim_Organization","Dim_Location","Dim_Company","Dim_FX_Rate","Facts_HeadCount","Facts_Movement","Dim_Market_Band"]
+annotation PBI_QueryOrder = ["RepositoryFolder","Dim_Employee","Dim_Date","Dim_Job","Dim_Organization","Dim_Location","Dim_Company","Dim_FX_Rate","Facts_HeadCount","Facts_Movement","Dim_Market_Band","Dim_Security"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -36,6 +36,13 @@ ref table Facts_HeadCount
 ref table Facts_Movement
 ref table Dim_Market_Band
 ref table _Measures
+ref table Dim_Security
+ref table LnFactorial
+
+ref role 'Global HR'
+ref role 'Country HR'
+ref role 'Regional HRBP'
+ref role 'BU HRBP'
 
 ref cultureInfo es-ES
 

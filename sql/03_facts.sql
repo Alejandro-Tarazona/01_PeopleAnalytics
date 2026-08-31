@@ -88,10 +88,19 @@ CREATE INDEX ix_f_headcount_location ON analytics.f_headcount (location_key);
 CREATE INDEX ix_f_headcount_org      ON analytics.f_headcount (org_key);
 
 -- --- Movements ----------------------------------------------------------------
+-- An event fact has to carry its own dimension keys. Joining it to the employee
+-- alone looks sufficient until someone slices attrition by city: the movement has
+-- no location, so every cell returns the company total. The keys below fix the
+-- event to the position the person actually held when it happened, which is also
+-- the only correct attribution for a promotion or a transfer.
 CREATE TABLE analytics.f_movement AS
 SELECT
     to_char(mv.event_date, 'YYYYMMDD')::int AS event_date_key,
     e.employee_key,
+    pos.job_key,
+    pos.org_key,
+    pos.location_key,
+    pos.company_key,
     mv.event_type,
     mv.event_reason,
     mv.currency_code,
@@ -108,8 +117,43 @@ SELECT
     (mv.event_type = 'Hire')             AS is_hire
 FROM raw.hris_movements mv
 JOIN analytics.d_employee e ON e.employee_id = mv.employee_id
-JOIN raw.fx_rates fx ON fx.currency_code = mv.currency_code AND fx.date = mv.event_date;
+JOIN raw.fx_rates fx ON fx.currency_code = mv.currency_code AND fx.date = mv.event_date
+-- The position held at the time of the event: the nearest snapshot at or before it.
+-- An exit in March belongs to the March org, not to wherever the person happened to
+-- sit in their final row. LATERAL keeps this to one indexed lookup per event; the
+-- COALESCE catches a hire whose event predates their first snapshot.
+LEFT JOIN LATERAL (
+    SELECT coalesce(before_event.job_key,      first_row.job_key)      AS job_key,
+           coalesce(before_event.org_key,      first_row.org_key)      AS org_key,
+           coalesce(before_event.location_key, first_row.location_key) AS location_key,
+           coalesce(before_event.company_key,  first_row.company_key)  AS company_key
+    FROM (SELECT f.job_key, f.org_key, f.location_key, f.company_key
+          FROM analytics.f_headcount f
+          WHERE f.employee_key = e.employee_key
+            AND f.snapshot_date_key <= to_char(mv.event_date, 'YYYYMMDD')::int
+          ORDER BY f.snapshot_date_key DESC LIMIT 1) before_event
+    FULL JOIN (SELECT f.job_key, f.org_key, f.location_key, f.company_key
+               FROM analytics.f_headcount f
+               WHERE f.employee_key = e.employee_key
+               ORDER BY f.snapshot_date_key ASC LIMIT 1) first_row ON true
+) pos ON true
+-- 77 events belong to 76 people who left on the first month-end of the horizon and
+-- so never appear in any snapshot. They have no position to attribute to. LEFT JOIN
+-- above and this filter make that a decision rather than a side effect of a join:
+-- an inner join would have removed the same rows without anyone noticing.
+-- They cost the analysis nothing — every one of them predates the trailing-twelve-
+-- month window by more than a year — and tests/test_sql_layer.py pins both the
+-- count and the reason so the day it changes, it fails.
+WHERE pos.job_key IS NOT NULL;
+
+ALTER TABLE analytics.f_movement
+    ALTER COLUMN job_key      SET NOT NULL,
+    ALTER COLUMN org_key      SET NOT NULL,
+    ALTER COLUMN location_key SET NOT NULL,
+    ALTER COLUMN company_key  SET NOT NULL;
 
 CREATE INDEX ix_f_movement_employee ON analytics.f_movement (employee_key);
 CREATE INDEX ix_f_movement_date     ON analytics.f_movement (event_date_key);
 CREATE INDEX ix_f_movement_type     ON analytics.f_movement (event_type);
+CREATE INDEX ix_f_movement_job      ON analytics.f_movement (job_key);
+CREATE INDEX ix_f_movement_location ON analytics.f_movement (location_key);

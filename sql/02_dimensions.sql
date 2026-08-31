@@ -117,3 +117,26 @@ SELECT
 FROM raw.fx_rates;
 
 ALTER TABLE analytics.d_fx_rate ADD PRIMARY KEY (date_key, currency_code);
+
+-- --- Security -----------------------------------------------------------------
+-- The bridge that row-level security reads. One row per user per scope, so a
+-- person covering two regions is two rows rather than a special case.
+--
+-- scope_type   Global            no filter at all
+--              Region            filters Dim_Location
+--              LegalEntity       filters Dim_Company
+--              BusinessUnit      filters Dim_Organization
+--              CompensationAccess  exempt from the minimum group size rule
+--
+-- Hidden in the model: it is plumbing, not something to slice a report by.
+CREATE TABLE analytics.d_security AS
+SELECT
+    row_number() OVER (ORDER BY user_email, scope_type, scope_value)::int AS security_key,
+    lower(user_email) AS user_email,
+    scope_type,
+    scope_value,
+    role_description
+FROM raw.ref_security;
+
+ALTER TABLE analytics.d_security ADD PRIMARY KEY (security_key);
+CREATE INDEX ix_d_security_user ON analytics.d_security (user_email);

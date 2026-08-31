@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "11490defcdf29859c374",
+  "position": {
+    "x": 0,
+    "y": 931.31474103585651,
+    "z": 2,
+    "height": 150,
+    "width": 1920,
+    "tabOrder": 2
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim_Company"
+                    }
+                  },
+                  "Property": "User"
+                }
+              },
+              "queryRef": "Dim_Company.User",
+              "nativeQueryRef": "User"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

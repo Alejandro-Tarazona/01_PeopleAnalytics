@@ -1,0 +1,75 @@
+table Dim_Security
+	isHidden
+	lineageTag: c4459494-20d6-4932-ac79-d80a9e7e1a7a
+
+	column security_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2c795a1e-d949-4eb8-b0d3-255a68daafe1
+		summarizeBy: sum
+		sourceColumn: security_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column user_email
+		dataType: string
+		isHidden
+		lineageTag: 83c9f431-4b1d-4c76-baec-dc837975c8fe
+		summarizeBy: none
+		sourceColumn: user_email
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column scope_type
+		dataType: string
+		isHidden
+		lineageTag: acb009ec-c2f7-4595-b187-bae3f3527ba7
+		summarizeBy: none
+		sourceColumn: scope_type
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column scope_value
+		dataType: string
+		isHidden
+		lineageTag: c1ed556f-8b67-45b7-83e2-8385efb09250
+		summarizeBy: none
+		sourceColumn: scope_value
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column role_description
+		dataType: string
+		isHidden
+		lineageTag: d8582612-366e-491e-bca8-e725840f6b60
+		summarizeBy: none
+		sourceColumn: role_description
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Security = m
+		mode: import
+		queryGroup: 'Dimensional Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.d_security"])
+				in
+				  Origen
+
+	changedProperty = IsHidden
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

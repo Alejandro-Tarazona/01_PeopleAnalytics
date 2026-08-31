@@ -120,6 +120,50 @@ table Facts_Movement
 
 		annotation SummarizationSetBy = Automatic
 
+	column job_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1c00
+		summarizeBy: none
+		sourceColumn: job_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1c01
+		summarizeBy: none
+		sourceColumn: org_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1c02
+		summarizeBy: none
+		sourceColumn: location_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1c03
+		summarizeBy: none
+		sourceColumn: company_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
 	partition Facts_Movement = m
 		mode: import
 		queryGroup: 'Factual Tables'

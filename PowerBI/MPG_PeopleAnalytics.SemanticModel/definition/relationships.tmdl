@@ -37,3 +37,20 @@ relationship 1cea4d66-7e98-9a72-e668-f8cf177dd24c
 relationship 72350759-147f-0873-cf82-7a7fe8a8fbf1
 	fromColumn: Facts_HeadCount.snapshot_date_key
 	toColumn: Dim_Date.date_key
+
+relationship 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1ab1
+	fromColumn: Facts_Movement.job_key
+	toColumn: Dim_Job.job_key
+
+relationship 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1ab2
+	fromColumn: Facts_Movement.org_key
+	toColumn: Dim_Organization.org_key
+
+relationship 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1ab3
+	fromColumn: Facts_Movement.location_key
+	toColumn: Dim_Location.location_key
+
+relationship 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1ab4
+	fromColumn: Facts_Movement.company_key
+	toColumn: Dim_Company.company_key
+

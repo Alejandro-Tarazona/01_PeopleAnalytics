@@ -1,0 +1,15 @@
+role 'Country HR'
+	modelPermission: read
+
+	tablePermission Dim_Company =
+			CONTAINS (
+			    FILTER (
+			        Dim_Security,
+			        Dim_Security[user_email] = LOWER ( USERPRINCIPALNAME () )
+			            && Dim_Security[scope_type] = "LegalEntity"
+			    ),
+			    Dim_Security[scope_value], Dim_Company[legal_entity]
+			)
+
+	annotation PBI_Id = 15887bedf18447a69e8ebf7472cc5a3b
+

@@ -1,0 +1,15 @@
+role 'BU HRBP'
+	modelPermission: read
+
+	tablePermission Dim_Organization =
+			CONTAINS (
+			    FILTER (
+			        Dim_Security,
+			        Dim_Security[user_email] = LOWER ( USERPRINCIPALNAME () )
+			            && Dim_Security[scope_type] = "BusinessUnit"
+			    ),
+			    Dim_Security[scope_value], Dim_Organization[business_unit]
+			)
+
+	annotation PBI_Id = c596d760dbfe48f3919b238434ed318b
+

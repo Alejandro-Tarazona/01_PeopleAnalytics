@@ -14,14 +14,86 @@ import pandas as pd
 from validation.db import query
 
 
+def test_accented_text_survives_the_load(conn, raw_locations):
+    r"""The city names in the database are the ones in the file, byte for byte.
+
+    \copy hands the file to the server in the session's client_encoding, which psql
+    derives from the console code page on Windows. A build run from a WIN1252
+    console reads UTF-8 accents as latin-1 and re-encodes them, so 'Bogota' with an
+    acute accent is stored as two characters instead of one. Row counts stay right
+    and nothing raises; the damage only appears when the scoring in
+    tests/test_reconciliation.py compares a city against ground_truth.json with ==
+    and gets False for a segment that is plainly there. 01_load_raw.sql declares
+    ENCODING 'UTF8' to stop it, and this is what keeps the declaration honest.
+    """
+    stored = set(query(conn, "SELECT city FROM analytics.d_location")["city"])
+    source = set(raw_locations["city"])
+    assert stored == source, (
+        "the location dimension does not carry the source spellings: "
+        f"only in the database {sorted(stored - source)}, "
+        f"only in the file {sorted(source - stored)}"
+    )
+
+
 def test_no_rows_lost_loading_the_headcount_fact(conn, raw_headcount):
     rows = query(conn, "SELECT count(*) AS n FROM analytics.f_headcount")["n"].iloc[0]
     assert rows == len(raw_headcount), "the fact join dropped or duplicated snapshot rows"
 
 
-def test_no_rows_lost_loading_the_movement_fact(conn, raw_movements):
-    rows = query(conn, "SELECT count(*) AS n FROM analytics.f_movement")["n"].iloc[0]
-    assert rows == len(raw_movements), "the fact join dropped or duplicated movement rows"
+def test_the_movement_fact_loses_only_the_events_it_declares(conn, raw_movements):
+    """Every source movement is either loaded or explained. There is no third case.
+
+    The movement fact carries its own job, org, location and company keys, fixed to
+    the position the person held when the event happened — without them, attrition
+    cannot be sliced by anything and every segment returns the company total.
+
+    That attribution needs the employee to appear in at least one month-end
+    snapshot, and 76 people do not: they left on the first month-end of the horizon.
+    Their 77 events cannot be attributed to any organisation. Dropping them is a
+    decision, taken in 03_facts.sql behind an explicit filter, and this test is what
+    stops it from quietly becoming something else.
+    """
+    loaded = query(conn, "SELECT count(*) AS n FROM analytics.f_movement")["n"].iloc[0]
+    unattributable = query(conn, """
+        SELECT count(*) AS n
+        FROM raw.hris_movements mv
+        JOIN analytics.d_employee e ON e.employee_id = mv.employee_id
+        WHERE NOT EXISTS (SELECT 1 FROM analytics.f_headcount f
+                          WHERE f.employee_key = e.employee_key)
+    """)["n"].iloc[0]
+
+    assert loaded + unattributable == len(raw_movements), (
+        f"{len(raw_movements) - loaded - unattributable} movement rows went missing "
+        "for a reason nobody wrote down"
+    )
+    assert unattributable == 77, (
+        f"{unattributable} events cannot be attributed to a position, not 77. "
+        "The exclusion is deliberate but its size is not supposed to move."
+    )
+
+
+def test_movement_events_are_attributed_to_the_position_held_at_the_time(conn):
+    """The keys point at the snapshot on or before the event, not at a random one.
+
+    An exit in March belongs to the March organisation. Reading the keys off the
+    employee's final surviving row gives the same answer for someone who never
+    moved and the wrong one for everybody else.
+    """
+    misattributed = query(conn, """
+        SELECT count(*) AS n
+        FROM analytics.f_movement m
+        JOIN LATERAL (
+            SELECT f.job_key, f.location_key, f.org_key, f.company_key
+            FROM analytics.f_headcount f
+            WHERE f.employee_key = m.employee_key
+              AND f.snapshot_date_key <= m.event_date_key
+            ORDER BY f.snapshot_date_key DESC LIMIT 1
+        ) expected ON true
+        WHERE (m.job_key, m.location_key, m.org_key, m.company_key)
+           IS DISTINCT FROM
+              (expected.job_key, expected.location_key, expected.org_key, expected.company_key)
+    """)["n"].iloc[0]
+    assert misattributed == 0, f"{misattributed} events carry the wrong position"
 
 
 def test_no_orphan_surrogate_keys(conn):

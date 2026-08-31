@@ -1,0 +1,11 @@
+user_email,scope_type,scope_value,role_description
+global.hr@mpg.example,Global,ALL,Head of People Analytics - full visibility
+lac.hrbp@mpg.example,Region,LAC,Regional HRBP for Latin America
+emea.hrbp@mpg.example,Region,EMEA,Regional HRBP covering EMEA and APAC
+emea.hrbp@mpg.example,Region,APAC,Regional HRBP covering EMEA and APAC
+colombia.hr@mpg.example,LegalEntity,MPG Colombia S.A.S.,Country HR lead for Colombia
+ireland.hr@mpg.example,LegalEntity,MPG Ireland Ltd.,Country HR lead for Ireland
+tech.hrbp@mpg.example,BusinessUnit,Technology,HRBP for the Technology business unit
+commercial.hrbp@mpg.example,BusinessUnit,Commercial,HRBP for the Commercial business unit
+comp.analyst@mpg.example,Global,ALL,Compensation analyst - full visibility
+comp.analyst@mpg.example,CompensationAccess,ALL,Exempt from the minimum group size rule

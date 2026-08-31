@@ -7,6 +7,17 @@
 --
 -- market_bands.xlsx is deliberately absent: the salary survey is cleansed in
 -- Power Query and joined in the semantic model. See docs/case/data-design.md.
+--
+-- ENCODING 'UTF8' on every \copy is not decoration. \copy reads the file on the
+-- client and hands it to the server in whatever client_encoding that psql session
+-- happens to have, and on Windows psql derives that from the console code page.
+-- Run the build from a WIN1252 console and every accented byte is read as latin-1
+-- and re-encoded on the way in: 'Bogota' with an acute accent lands in the raw
+-- layer as the two characters 0xC3 0xA1 spell in that code page. Nothing errors,
+-- the row counts are right, and the corruption only surfaces four layers later
+-- when a city fails to match the same city in ground_truth.json. Declaring the
+-- file's encoding makes the load say what it reads instead of inheriting it from
+-- the reviewer's terminal.
 -- =============================================================================
 
 CREATE TABLE raw.ref_locations (
@@ -58,6 +69,16 @@ CREATE TABLE raw.hris_headcount_monthly (
     fte                  numeric(3,2)  NOT NULL
 );
 
+-- Who may see what. Reference data like any other: an access matrix that lives in
+-- a file is reviewable in a pull request, which an access matrix living inside a
+-- report is not.
+CREATE TABLE raw.ref_security (
+    user_email        text NOT NULL,
+    scope_type        text NOT NULL,
+    scope_value       text NOT NULL,
+    role_description  text
+);
+
 CREATE TABLE raw.hris_movements (
     event_date           date NOT NULL,
     employee_id          text NOT NULL,
@@ -68,12 +89,13 @@ CREATE TABLE raw.hris_movements (
     currency_code        char(3) NOT NULL
 );
 
-\copy raw.ref_locations         FROM 'data/raw/ref_locations.csv'         WITH (FORMAT csv, HEADER true)
-\copy raw.ref_job_catalog       FROM 'data/raw/ref_job_catalog.csv'       WITH (FORMAT csv, HEADER true)
-\copy raw.fx_rates              FROM 'data/raw/fx_rates.csv'              WITH (FORMAT csv, HEADER true)
-\copy raw.hris_employees        FROM 'data/raw/hris_employees.csv'        WITH (FORMAT csv, HEADER true)
-\copy raw.hris_headcount_monthly FROM 'data/raw/hris_headcount_monthly.csv' WITH (FORMAT csv, HEADER true)
-\copy raw.hris_movements        FROM 'data/raw/hris_movements.csv'        WITH (FORMAT csv, HEADER true)
+\copy raw.ref_locations         FROM 'data/raw/ref_locations.csv'         WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
+\copy raw.ref_job_catalog       FROM 'data/raw/ref_job_catalog.csv'       WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
+\copy raw.ref_security          FROM 'data/raw/ref_security.csv'          WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
+\copy raw.fx_rates              FROM 'data/raw/fx_rates.csv'              WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
+\copy raw.hris_employees        FROM 'data/raw/hris_employees.csv'        WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
+\copy raw.hris_headcount_monthly FROM 'data/raw/hris_headcount_monthly.csv' WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
+\copy raw.hris_movements        FROM 'data/raw/hris_movements.csv'        WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')
 
 -- Indexes on the join keys used by the transformation layer.
 CREATE INDEX ix_headcount_employee ON raw.hris_headcount_monthly (employee_id);
