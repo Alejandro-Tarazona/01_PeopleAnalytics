@@ -1,0 +1,8 @@
+expression RepositoryFolder = "C:\Portfolio\01_PeopleAnalytics" meta [IsParameterQuery=true, Type="Any", IsParameterQueryRequired=true]
+	lineageTag: 8d3a66c2-54d5-4942-8492-c00855b7fb89
+	queryGroup: Parameters
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Text
+

@@ -1,0 +1,76 @@
+table Dim_Employee
+	lineageTag: 0d237154-3299-4320-b5f8-255dfec45328
+
+	column employee_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 9ba845d1-eb50-4934-a057-cce5ef41c884
+		summarizeBy: none
+		sourceColumn: employee_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column employee_id
+		dataType: string
+		lineageTag: 1dea2552-6957-40ab-a6ed-116583cb2b04
+		summarizeBy: none
+		sourceColumn: employee_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column hire_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4def7114-326f-4c87-992b-f214aed424be
+		summarizeBy: none
+		sourceColumn: hire_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: b67b4a39-35e9-4b08-b74c-b0f3af2daa33
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column employment_type
+		dataType: string
+		lineageTag: 5c5c32e1-4b29-4e03-be4a-0d19108aedf0
+		summarizeBy: none
+		sourceColumn: employment_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column exit_date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f4da7b4e-7eee-40bd-8d44-4bc7b1b3c9f6
+		summarizeBy: none
+		sourceColumn: exit_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 0a310f83-4567-45d6-8492-01589aef04d3
+		summarizeBy: none
+		sourceColumn: is_active
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Employee = m
+		mode: import
+		queryGroup: 'Dimensional Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.d_employee"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

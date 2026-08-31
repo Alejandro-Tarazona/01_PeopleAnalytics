@@ -1,0 +1,135 @@
+table Facts_Movement
+	lineageTag: f075166e-e012-4a43-8d03-edfa2e63877e
+
+	column event_date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 171d8ea3-591d-4bc3-a2a8-b9843ba88697
+		summarizeBy: none
+		sourceColumn: event_date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column employee_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 25f1268e-b5c4-4450-b16f-9f28739658cf
+		summarizeBy: none
+		sourceColumn: employee_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_type
+		dataType: string
+		lineageTag: 398e6ff4-7b20-450d-a5cf-3ecfad9042bf
+		summarizeBy: none
+		sourceColumn: event_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column event_reason
+		dataType: string
+		lineageTag: 8e5b50ea-6675-485d-b2bc-c88afb437854
+		summarizeBy: none
+		sourceColumn: event_reason
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		lineageTag: 308249a8-dc70-41a5-b878-98a4f25100f2
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column salary_local_before
+		dataType: double
+		lineageTag: 9eb3f078-21f9-4e9e-bd8c-0f521f63de99
+		summarizeBy: sum
+		sourceColumn: salary_local_before
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column salary_local_after
+		dataType: double
+		lineageTag: bffa539d-6753-4a6d-b306-c6341e7e0529
+		summarizeBy: sum
+		sourceColumn: salary_local_after
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column salary_usd_before
+		dataType: double
+		lineageTag: cda815b0-fa25-40b3-8edb-1c1aad0540f7
+		summarizeBy: sum
+		sourceColumn: salary_usd_before
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column salary_usd_after
+		dataType: double
+		lineageTag: 649d1767-55b3-403f-9ed5-8a4f310e7789
+		summarizeBy: sum
+		sourceColumn: salary_usd_after
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column salary_change_pct
+		dataType: double
+		lineageTag: 7a6626ce-64ea-48ba-a62b-6f08cbe0c212
+		summarizeBy: sum
+		sourceColumn: salary_change_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column is_voluntary_exit
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d8861839-8c8f-4a32-b37c-9543cfbbea0e
+		summarizeBy: none
+		sourceColumn: is_voluntary_exit
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_involuntary_exit
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 48d351a1-5bad-42c1-a0f8-d8e18828d5a2
+		summarizeBy: none
+		sourceColumn: is_involuntary_exit
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_hire
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 45a55589-df6a-4a8a-9398-098cdd35b5fd
+		summarizeBy: none
+		sourceColumn: is_hire
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Facts_Movement = m
+		mode: import
+		queryGroup: 'Factual Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.f_movement"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

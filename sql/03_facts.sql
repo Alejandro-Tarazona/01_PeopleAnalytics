@@ -45,6 +45,11 @@ SELECT
     round(h.base_salary_local / fx.rate_local_per_usd_constant, 2) AS base_salary_usd_constant,
     round(h.base_salary_local / fx.rate_local_per_usd_actual,   2) AS base_salary_usd_actual,
     h.variable_target_pct,
+    -- Composite key for the market band relationship. Bands join on three
+    -- columns (job code, level, geo tier) and Power BI supports single-column
+    -- relationships only, so both sides carry the same concatenated key. Power
+    -- Query builds the identical string on the salary survey.
+    trim(j.job_code) || '|' || j.job_level || '|' || l.geo_tier AS band_key,
     round(h.base_salary_local * (1 + h.variable_target_pct)
           / fx.rate_local_per_usd_constant, 2)             AS target_cash_usd_constant,
     -- Internal pay position: where this person sits inside their own

@@ -1,0 +1,84 @@
+table Dim_Location
+	lineageTag: 1005012a-30f2-44c1-abe0-250daaa48cfb
+
+	column location_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 248966a1-281a-4abe-9710-7a584f34ae8d
+		summarizeBy: none
+		sourceColumn: location_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: 14a497cc-13f2-4a6e-95f3-05a3516ca716
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column country
+		dataType: string
+		lineageTag: 0b3ff97c-2fd3-4892-b186-9a98bb6a5843
+		summarizeBy: none
+		sourceColumn: country
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 96d8046b-d1f9-4cbf-9cc2-7b10a4a31075
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		lineageTag: c07a64a4-c80f-455b-9da0-6c9c9d2f8f43
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_hub
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 27d394b3-d1bd-49ed-be84-b24ae43d9c46
+		summarizeBy: none
+		sourceColumn: is_hub
+
+		annotation SummarizationSetBy = Automatic
+
+	column geo_tier
+		dataType: string
+		lineageTag: 07b50804-d81e-4087-af4e-23ba9afd7ffb
+		summarizeBy: none
+		sourceColumn: geo_tier
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_of_labor_index
+		dataType: double
+		lineageTag: 9a839191-add6-47d6-bb53-ca98d82297d5
+		summarizeBy: none
+		sourceColumn: cost_of_labor_index
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Dim_Location = m
+		mode: import
+		queryGroup: 'Dimensional Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.d_location"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

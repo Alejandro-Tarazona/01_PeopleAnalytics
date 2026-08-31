@@ -1,0 +1,41 @@
+table Dim_Organization
+	lineageTag: 8a990a08-35f8-4e77-8b2b-84e41d81ce81
+
+	column org_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 756b6172-c543-48f7-9f71-71f736428bd2
+		summarizeBy: none
+		sourceColumn: org_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column business_unit
+		dataType: string
+		lineageTag: ea240dda-fcfb-4d1b-91cd-1d93a96b71aa
+		summarizeBy: none
+		sourceColumn: business_unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column department
+		dataType: string
+		lineageTag: d305011f-050a-4c1b-b52e-f598cb6f30f6
+		summarizeBy: none
+		sourceColumn: department
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Organization = m
+		mode: import
+		queryGroup: 'Dimensional Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.d_org"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,9 +1,8 @@
 # Analytical database — rebuilt from data/raw
 data/*.duckdb
 
-# Power BI Desktop
-**/.pbi/cache.abf
-**/.pbi/localSettings.json
+# Power BI Desktop local state
+**/.pbi/
 *.pbix
 
 # Python

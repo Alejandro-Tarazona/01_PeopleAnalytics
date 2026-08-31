@@ -1,0 +1,183 @@
+table Dim_Market_Band
+	lineageTag: d31f5b77-721e-4fdf-aafd-d77d011e5377
+
+	column band_key
+		dataType: string
+		lineageTag: 451fd27c-9f1a-4c76-8497-18eca8e32385
+		summarizeBy: none
+		sourceColumn: band_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_code
+		dataType: string
+		lineageTag: e45b5487-d3a1-4886-881f-67a8a57cc8ed
+		summarizeBy: none
+		sourceColumn: job_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_family
+		dataType: string
+		lineageTag: 29ca02fc-c68c-4295-9282-6db767720795
+		summarizeBy: none
+		sourceColumn: job_family
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_level
+		dataType: string
+		lineageTag: 56043856-7d7c-4fb5-a8b3-6599bdd16ffc
+		summarizeBy: none
+		sourceColumn: job_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column track
+		dataType: string
+		lineageTag: 2d2c78f9-975b-4cf4-b6fb-3e79efe7a051
+		summarizeBy: none
+		sourceColumn: track
+
+		annotation SummarizationSetBy = Automatic
+
+	column geo_tier
+		dataType: string
+		lineageTag: d938184c-b00a-4b6b-aac8-54cd0d604fa1
+		summarizeBy: none
+		sourceColumn: geo_tier
+
+		annotation SummarizationSetBy = Automatic
+
+	column band_min_usd
+		dataType: double
+		lineageTag: f3030557-be3e-476a-b2dd-279bcba79835
+		summarizeBy: none
+		sourceColumn: band_min_usd
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column band_mid_usd
+		dataType: double
+		lineageTag: e7648c42-c96c-4746-bf2b-b503e74c05f1
+		summarizeBy: none
+		sourceColumn: band_mid_usd
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column band_max_usd
+		dataType: double
+		lineageTag: dfefbee9-b4ca-4357-bb18-0567b7b8f514
+		summarizeBy: none
+		sourceColumn: band_max_usd
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column market_variable_pct
+		dataType: double
+		lineageTag: 87c29559-beaf-479a-aa2b-65dcd0517ef1
+		summarizeBy: none
+		sourceColumn: market_variable_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column survey_year
+		dataType: int64
+		formatString: 0
+		lineageTag: 66f798cf-7128-43d6-9acb-1297a9b6fbba
+		summarizeBy: none
+		sourceColumn: survey_year
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Market_Band = m
+		mode: import
+		source =
+				let
+				    // The path comes from a parameter so nothing machine-specific lives in the query.
+				    FilePath = RepositoryFolder & "\data\raw\market_bands.xlsx",
+				    Source = Excel.Workbook(File.Contents(FilePath), null, true),
+				    Sheet = Source{0}[Data],
+				
+				    // The vendor puts four rows of preamble above the real header, and is free to
+				    // change how many. Locate the header row instead of hard-coding a skip count.
+				    FirstColumn = List.Transform(
+				        Table.Column(Sheet, "Column1"),
+				        each if _ = null then "" else Text.Trim(Text.From(_))
+				    ),
+				    HeaderIndex = List.PositionOf(FirstColumn, "Job Code"),
+				    Located = if HeaderIndex = -1
+				              then error "No header row found in market_bands.xlsx: expected a cell reading 'Job Code'"
+				              else Table.Skip(Sheet, HeaderIndex),
+				    Promoted = Table.PromoteHeaders(Located, [PromoteAllScalars = true]),
+				
+				    // Trailing blank rows carry no job code at all.
+				    NoBlanks = Table.SelectRows(Promoted, each [Job Code] <> null),
+				
+				    // Stray whitespace in roughly 6% of the codes.
+				    Trimmed = Table.TransformColumns(NoBlanks, {
+				        {"Job Code",   each Text.Trim(Text.From(_)), type text},
+				        {"Job Family", each Text.Trim(Text.From(_)), type text},
+				        {"Track",      each Text.Trim(Text.From(_)), type text},
+				        {"Geo Tier",   each Text.Trim(Text.From(_)), type text}
+				    }),
+				
+				    // The vendor's footer note sits in the job code column. Keeping only rows whose
+				    // code matches the catalogue's shape removes it without hard-coding the note's
+				    // text, which the vendor is free to change between editions.
+				    OnlyJobCodes = Table.SelectRows(Trimmed, each
+				        Text.Length([Job Code]) = 3 and Text.Select([Job Code], {"A".."Z"}) = [Job Code]),
+				
+				    // "IC 3" and "IC3" are the same level written two ways.
+				    Levels = Table.TransformColumns(OnlyJobCodes, {
+				        {"Job Level", each Text.Trim(Text.Replace(Text.From(_), " ", "")), type text}
+				    }),
+				
+				    // Roughly 18% of the amounts arrive as currency-formatted text.
+				    ToAmount = (value) =>
+				        if value is number then value
+				        else Number.FromText(Text.Select(Text.From(value), {"0".."9", "."})),
+				    Amounts = Table.TransformColumns(Levels, {
+				        {"Band Min", ToAmount, type number},
+				        {"Band Mid", ToAmount, type number},
+				        {"Band Max", ToAmount, type number},
+				        {"Variable Target %", each Number.From(_), type number},
+				        {"Survey Year", each Int64.From(_), Int64.Type}
+				    }),
+				
+				    // Composite key for the relationship to f_headcount. Power BI supports
+				    // single-column relationships only, and bands join on three columns, so both
+				    // sides carry the same concatenated key. SQL builds the identical string.
+				    WithKey = Table.AddColumn(Amounts, "band_key",
+				        each [Job Code] & "|" & [Job Level] & "|" & [Geo Tier], type text),
+				
+				    // The vendor file contains one exact duplicate row.
+				    Deduplicated = Table.Distinct(WithKey, {"band_key"}),
+				
+				    Renamed = Table.RenameColumns(Deduplicated, {
+				        {"Job Code", "job_code"}, {"Job Family", "job_family"},
+				        {"Job Level", "job_level"}, {"Track", "track"}, {"Geo Tier", "geo_tier"},
+				        {"Band Min", "band_min_usd"}, {"Band Mid", "band_mid_usd"},
+				        {"Band Max", "band_max_usd"},
+				        {"Variable Target %", "market_variable_pct"}, {"Survey Year", "survey_year"}
+				    }),
+				    Final = Table.SelectColumns(Renamed, {
+				        "band_key", "job_code", "job_family", "job_level", "track", "geo_tier",
+				        "band_min_usd", "band_mid_usd", "band_max_usd",
+				        "market_variable_pct", "survey_year"
+				    })
+				in
+				    Final
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

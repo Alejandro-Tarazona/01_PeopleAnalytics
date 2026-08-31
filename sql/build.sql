@@ -6,8 +6,9 @@
 --   psql -U postgres -d mpg_analytics -v ON_ERROR_STOP=1 -f sql/build.sql
 --
 -- Idempotent: the schemas are dropped and recreated, so running it twice gives
--- the same database. Grants are deliberately excluded — they need a
--- password and are run once, separately.
+-- the same database. Grants are re-applied at the end, because dropping the
+-- schema drops them too. Creating the reporting role itself needs a password and
+-- is done once, separately, in sql/04_role.sql.
 -- =============================================================================
 
 \timing on
@@ -20,6 +21,8 @@
 \i sql/02_dimensions.sql
 \echo '→ facts'
 \i sql/03_facts.sql
+\echo '→ re-applying read-only privileges'
+\i sql/05_grants.sql
 
 \echo ''
 \echo 'Row counts:'

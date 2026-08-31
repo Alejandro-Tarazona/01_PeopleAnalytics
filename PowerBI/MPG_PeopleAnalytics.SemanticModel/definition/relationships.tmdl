@@ -1,0 +1,39 @@
+relationship AutoDetected_9f61b1a9-ac8d-437e-932f-53d27e728ee8
+	fromColumn: Facts_HeadCount.employee_key
+	toColumn: Dim_Employee.employee_key
+
+relationship AutoDetected_a94e9dd8-f623-4ecd-8c34-7e4bad406296
+	fromColumn: Facts_Movement.employee_key
+	toColumn: Dim_Employee.employee_key
+
+relationship AutoDetected_f4f8c29c-be55-4a4b-99cb-16103e577212
+	fromColumn: Facts_HeadCount.job_key
+	toColumn: Dim_Job.job_key
+
+relationship AutoDetected_3d2f7af3-a297-41df-bb1a-2a10083218c4
+	fromColumn: Facts_HeadCount.org_key
+	toColumn: Dim_Organization.org_key
+
+relationship AutoDetected_0a6e4d37-265f-4b96-8d79-38c3fbe45819
+	fromColumn: Facts_HeadCount.location_key
+	toColumn: Dim_Location.location_key
+
+relationship AutoDetected_1abb7ca4-5323-4fda-9f8d-1f9f1a276e3c
+	fromColumn: Facts_HeadCount.company_key
+	toColumn: Dim_Company.company_key
+
+relationship AutoDetected_9d53fc25-1e91-4ce8-bd99-605ba80fa3ae
+	fromColumn: Facts_HeadCount.band_key
+	toColumn: Dim_Market_Band.band_key
+
+relationship 7c7e69dc-8330-99a7-9f4d-b5693ceace08
+	fromColumn: Dim_FX_Rate.date_key
+	toColumn: Dim_Date.date_key
+
+relationship 1cea4d66-7e98-9a72-e668-f8cf177dd24c
+	fromColumn: Facts_Movement.event_date_key
+	toColumn: Dim_Date.date_key
+
+relationship 72350759-147f-0873-cf82-7a7fe8a8fbf1
+	fromColumn: Facts_HeadCount.snapshot_date_key
+	toColumn: Dim_Date.date_key

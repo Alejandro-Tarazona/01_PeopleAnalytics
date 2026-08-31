@@ -1,0 +1,331 @@
+/// Every measure in the model lives here rather than inside a fact table, so they
+/// surface at the top of the field list and are never confused with the columns
+/// they aggregate.
+table _Measures
+	lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a01
+
+	column Value
+		isHidden
+		formatString: 0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a02
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Employees on the books at the latest month-end inside the current filter context.
+	/// Facts_HeadCount is a periodic snapshot: summing it across months would count the
+	/// same person once per month, which is how a headcount ends up ten times too large.
+	measure Headcount =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE ( COUNTROWS ( Facts_HeadCount ), Dim_Date[date_key] = LastSnapshot )
+		displayFolder: 01 Base
+		formatString: #,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000000
+
+	/// Full-time equivalent at the latest month-end. Lower than headcount because
+	/// part-time contracts count as a fraction.
+	measure 'FTE Total' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE ( SUM ( Facts_HeadCount[fte] ), Dim_Date[date_key] = LastSnapshot )
+		displayFolder: 01 Base
+		formatString: #,##0.0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000001
+
+	/// Annualised base payroll in constant currency. Constant, not actual, so a currency
+	/// movement is never mistaken for a compensation decision.
+	measure 'Annualised Payroll USD' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
+		displayFolder: 01 Base
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000002
+
+	/// Mean base salary. Blank below five employees: a group that small is identifiable
+	/// and individual pay is not for display.
+	measure 'Average Base Salary USD' =
+			VAR Population = [Headcount]
+			RETURN
+			    IF ( Population >= 5, DIVIDE ( [Annualised Payroll USD], Population ) )
+		displayFolder: 01 Base
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000003
+
+	/// Median base salary. Less distorted by a handful of senior salaries than the mean,
+	/// and the figure a compensation team actually quotes.
+	measure 'Median Base Salary USD' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    IF (
+			        [Headcount] >= 5,
+			        CALCULATE ( MEDIANX ( Facts_HeadCount, Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
+			    )
+		displayFolder: 01 Base
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000004
+
+	/// Base pay against the market midpoint, weighted by population. Never an average of
+	/// per-row ratios: the average of ratios is not the ratio of averages, and for a group
+	/// of mixed seniority the two differ enough to change a decision.
+	measure 'Weighted Average Compa-Ratio' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR Pay = CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
+			VAR Market = CALCULATE ( SUMX ( Facts_HeadCount, RELATED ( Dim_Market_Band[band_mid_usd] ) ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    IF ( [Headcount] >= 5, DIVIDE ( Pay, Market ) )
+		displayFolder: 02 Pay position
+		formatString: 0.00
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000005
+
+	/// Total target cash - base plus variable - against the market equivalent. This is the
+	/// measure the prioritisation rule reads. Base pay in isolation flags populations whose
+	/// variable component already puts them at market.
+	measure 'Weighted Average TTC Compa-Ratio' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR Cash = CALCULATE ( SUM ( Facts_HeadCount[target_cash_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
+			VAR Market =
+			    CALCULATE (
+			        SUMX ( Facts_HeadCount, RELATED ( Dim_Market_Band[band_mid_usd] ) * ( 1 + RELATED ( Dim_Market_Band[market_variable_pct] ) ) ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+			RETURN
+			    IF ( [Headcount] >= 5, DIVIDE ( Cash, Market ) )
+		displayFolder: 02 Pay position
+		formatString: 0.00
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000006
+
+	/// Share of the population paid below the band minimum.
+	measure '% Below Band Minimum' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR Below =
+			    CALCULATE (
+			        COUNTROWS ( FILTER ( Facts_HeadCount, Facts_HeadCount[base_salary_usd_constant] < RELATED ( Dim_Market_Band[band_min_usd] ) ) ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+			RETURN
+			    IF ( [Headcount] >= 5, DIVIDE ( Below, [Headcount] ) )
+		displayFolder: 02 Pay position
+		formatString: 0.0%
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000007
+
+	/// Share paid above the band maximum. The mirror of the measure above, and the one
+	/// nobody asks for until a budget review.
+	measure '% Above Band Maximum' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR Above =
+			    CALCULATE (
+			        COUNTROWS ( FILTER ( Facts_HeadCount, Facts_HeadCount[base_salary_usd_constant] > RELATED ( Dim_Market_Band[band_max_usd] ) ) ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+			RETURN
+			    IF ( [Headcount] >= 5, DIVIDE ( Above, [Headcount] ) )
+		displayFolder: 02 Pay position
+		formatString: 0.0%
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000008
+
+	/// Share sitting inside the band. The three shares sum to one.
+	measure '% In Band' = IF ( [Headcount] >= 5, 1 - [% Below Band Minimum] - [% Above Band Maximum] )
+		displayFolder: 02 Pay position
+		formatString: 0.0%
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000009
+
+	/// Where the population sits inside its own city, job and level cohort, independent of
+	/// any market band. Suppressed in SQL below five peers, so it averages safely here.
+	measure 'Average Peer Percentile' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE ( AVERAGE ( Facts_HeadCount[peer_percentile] ), Dim_Date[date_key] = LastSnapshot )
+		displayFolder: 02 Pay position
+		formatString: 0.00
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000010
+
+	/// Voluntary departures over the trailing twelve months.
+	measure 'Voluntary Exits LTM' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        COUNTROWS ( Facts_Movement ),
+			        Facts_Movement[event_type] = "Voluntary Exit",
+			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			    )
+		displayFolder: 03 Movement
+		formatString: #,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000011
+
+	/// Involuntary departures over the trailing twelve months. Kept separate on purpose:
+	/// one attrition figure hides whether people are leaving or being asked to leave.
+	measure 'Involuntary Exits LTM' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        COUNTROWS ( Facts_Movement ),
+			        Facts_Movement[event_type] = "Involuntary Exit",
+			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			    )
+		displayFolder: 03 Movement
+		formatString: #,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000012
+
+	/// Hires over the trailing twelve months.
+	measure 'Hires LTM' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        COUNTROWS ( Facts_Movement ),
+			        Facts_Movement[event_type] = "Hire",
+			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			    )
+		displayFolder: 03 Movement
+		formatString: #,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000013
+
+	/// Average headcount across the trailing twelve months. The denominator of the attrition
+	/// rate: closing headcount understates attrition in a growing population and overstates
+	/// it in a shrinking one.
+	measure 'Average Headcount LTM' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        DIVIDE ( COUNTROWS ( Facts_HeadCount ), 12 ),
+			        DATESINPERIOD ( Dim_Date[date], LastDate, -12, MONTH )
+			    )
+		displayFolder: 03 Movement
+		formatString: #,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000014
+
+	/// Voluntary attrition over the trailing twelve months.
+	measure 'Voluntary Attrition % LTM' = DIVIDE ( [Voluntary Exits LTM], [Average Headcount LTM] )
+		displayFolder: 03 Movement
+		formatString: 0.0%
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000015
+
+	/// The company-wide attrition rate, unaffected by what is filtered. Every segment is
+	/// judged against this, so it has to ignore the current selection.
+	measure 'Company Attrition Baseline' = CALCULATE ( DIVIDE ( [Voluntary Exits LTM], [Average Headcount LTM] ), REMOVEFILTERS () )
+		displayFolder: 03 Movement
+		formatString: 0.0%
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000016
+
+	/// How far the selection sits above or below the company rate. Above 1 means losing
+	/// people faster than the company as a whole.
+	measure 'Attrition vs Baseline' = DIVIDE ( [Voluntary Attrition % LTM], [Company Attrition Baseline] )
+		displayFolder: 03 Movement
+		formatString: 0.00
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000017
+
+	/// Mean tenure in years at the latest month-end.
+	measure 'Average Tenure Years' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    CALCULATE (
+			        AVERAGEX ( Facts_HeadCount, DATEDIFF ( RELATED ( Dim_Employee[hire_date] ), LastDate, DAY ) / 365.25 ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		displayFolder: 03 Movement
+		formatString: 0.0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000018
+
+	/// Direct reports per manager, seen from the employee's side: the average employee's
+	/// manager carries this many people. Derived in SQL from the manager self-reference,
+	/// because the source extract has no such column.
+	measure 'Average Span of Control' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE ( AVERAGE ( Facts_HeadCount[span_of_manager] ), Dim_Date[date_key] = LastSnapshot )
+		displayFolder: 04 Organisation
+		formatString: 0.0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000019
+
+	/// The company-wide span, ignoring the current selection. A segment is only
+	/// organisationally unusual relative to the rest of the company.
+	measure 'Company Span Baseline' = CALCULATE ( [Average Span of Control], REMOVEFILTERS () )
+		displayFolder: 04 Organisation
+		formatString: 0.0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000020
+
+	/// Annualised cost of lifting everyone below the band minimum up to it. The numerator
+	/// of any pay-adjustment business case.
+	measure 'Cost to Band Minimum' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE (
+			        SUMX ( Facts_HeadCount, MAX ( RELATED ( Dim_Market_Band[band_min_usd] ) - Facts_HeadCount[base_salary_usd_constant], 0 ) ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		displayFolder: 05 Economics
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000021
+
+	/// Cost of replacing someone, as a multiple of annual salary: recruitment, interview
+	/// time, onboarding, team overload while the seat is empty, and lost productivity during
+	/// ramp-up. A declared assumption, not a measured value. Sensitivity is reported
+	/// alongside any recommendation that depends on it.
+	measure 'Replacement Factor' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE (
+			        AVERAGEX (
+			            Facts_HeadCount,
+			            SWITCH (
+			                TRUE (),
+			                RELATED ( Dim_Job[track] ) = "Manager", 2.0,
+			                RELATED ( Dim_Job[job_family] ) = "Operations", 0.5,
+			                RELATED ( Dim_Job[job_family] ) IN { "Engineering", "Data & Analytics", "Product Management", "Sales" }, 1.5,
+			                1.0
+			            )
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		displayFolder: 05 Economics
+		formatString: 0.00
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000022
+
+	/// What the current attrition rate costs over the next twelve months if nothing changes.
+	/// This is what a pay adjustment is weighed against.
+	measure 'Attrition Exposure USD' = [Voluntary Exits LTM] * [Average Base Salary USD] * [Replacement Factor]
+		displayFolder: 05 Economics
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000023
+
+	/// Months for the adjustment to pay for itself, assuming it brings attrition down to the
+	/// company baseline. Blank where attrition is already at or below the baseline: there is
+	/// nothing to recover.
+	measure 'Payback Months' =
+			VAR ExcessRate = [Voluntary Attrition % LTM] - [Company Attrition Baseline]
+			VAR AvoidedExposure = DIVIDE ( ExcessRate, [Voluntary Attrition % LTM] ) * [Attrition Exposure USD]
+			RETURN
+			    IF ( ExcessRate > 0, DIVIDE ( [Cost to Band Minimum], DIVIDE ( AvoidedExposure, 12 ) ) )
+		displayFolder: 05 Economics
+		formatString: 0.0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000024
+
+	/// Payroll at the exchange rate of each month. Reconciles to Finance, and is the only
+	/// place the actual rate is used.
+	measure 'Payroll USD Actual' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			RETURN
+			    CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_actual] ), Dim_Date[date_key] = LastSnapshot )
+		displayFolder: 06 Currency
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000025
+
+	/// The part of the payroll movement nobody in the company controls. Splitting it out is
+	/// what stops a currency movement being read as a pay decision.
+	measure 'Currency Effect USD' = [Payroll USD Actual] - [Annualised Payroll USD]
+		displayFolder: 06 Currency
+		formatString: $#,##0
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000026
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("Value", BLANK())
+

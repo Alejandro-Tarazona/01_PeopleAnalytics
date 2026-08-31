@@ -1,0 +1,41 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-CO
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup Parameters
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup 'Dimensional Tables'
+
+	annotation PBI_QueryGroupOrder = 1
+
+queryGroup 'Factual Tables'
+
+	annotation PBI_QueryGroupOrder = 2
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["RepositoryFolder","Dim_Employee","Dim_Date","Dim_Job","Dim_Organization","Dim_Location","Dim_Company","Dim_FX_Rate","Facts_HeadCount","Facts_Movement","Dim_Market_Band"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Dim_Employee
+ref table Dim_Date
+ref table Dim_Job
+ref table Dim_Organization
+ref table Dim_Location
+ref table Dim_Company
+ref table Dim_FX_Rate
+ref table Facts_HeadCount
+ref table Facts_Movement
+ref table Dim_Market_Band
+ref table _Measures
+
+ref cultureInfo es-ES
+

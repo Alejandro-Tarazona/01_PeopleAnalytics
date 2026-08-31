@@ -1,0 +1,62 @@
+table Dim_FX_Rate
+	lineageTag: 67aaf99f-dfde-4aec-9c66-49199332d824
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 5c3cfbc4-67c1-4d33-835f-9934ab60177f
+		summarizeBy: none
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: aea081cf-f147-4d72-9e2d-2c11ce41a717
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		lineageTag: 5ac1c870-6be7-4dbc-ba24-0c699b2a6ad8
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_local_per_usd_actual
+		dataType: double
+		lineageTag: 35b40ee9-1954-43e9-8a3d-91d693b5cbf3
+		summarizeBy: sum
+		sourceColumn: rate_local_per_usd_actual
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column rate_local_per_usd_constant
+		dataType: double
+		lineageTag: d7c2dfc6-c0c0-41c7-95cf-a2bb3b7f8f90
+		summarizeBy: sum
+		sourceColumn: rate_local_per_usd_constant
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Dim_FX_Rate = m
+		mode: import
+		queryGroup: 'Dimensional Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.d_fx_rate"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

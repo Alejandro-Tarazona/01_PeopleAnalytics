@@ -1,0 +1,184 @@
+table Facts_HeadCount
+	lineageTag: a18184ea-931e-4c90-9aa0-8224fbbd9aea
+
+	column snapshot_date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 574988a4-f461-4436-9773-261d24915e0c
+		summarizeBy: none
+		sourceColumn: snapshot_date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column employee_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 834fd0b2-5c90-4eb8-a706-6f120b2f80ec
+		summarizeBy: none
+		sourceColumn: employee_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 20210f75-21e6-47ac-b141-1b3d81513173
+		summarizeBy: none
+		sourceColumn: job_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column org_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 40d56d41-b80c-45d3-992d-6116eb3d7c96
+		summarizeBy: none
+		sourceColumn: org_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column location_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 116d227e-69a3-40a4-b2d4-6003b769dfe9
+		summarizeBy: none
+		sourceColumn: location_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column company_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 4560266a-4071-4bdc-86e9-d2acf343370c
+		summarizeBy: none
+		sourceColumn: company_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column manager_employee_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 0be0d79a-4236-44e1-a64d-68a6ad7b1140
+		summarizeBy: sum
+		sourceColumn: manager_employee_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column span_of_manager
+		dataType: int64
+		formatString: 0
+		lineageTag: 1c6b4734-8ab8-43bd-b4a5-99ebbaf4693d
+		summarizeBy: sum
+		sourceColumn: span_of_manager
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		lineageTag: 3db3f835-26b5-44b1-a9f0-13bd938ff4e0
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_salary_local
+		dataType: double
+		lineageTag: 4c42abd6-1b6d-42da-b6de-5663f8fcce6a
+		summarizeBy: sum
+		sourceColumn: base_salary_local
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column base_salary_usd_constant
+		dataType: double
+		lineageTag: fd11e89c-e116-4265-9657-30b844179da0
+		summarizeBy: sum
+		sourceColumn: base_salary_usd_constant
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column base_salary_usd_actual
+		dataType: double
+		lineageTag: cd825cfc-f78c-4657-a315-c0ddb76b19ae
+		summarizeBy: sum
+		sourceColumn: base_salary_usd_actual
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column variable_target_pct
+		dataType: double
+		lineageTag: f1cd0546-efd7-4106-99a2-919411bcce5f
+		summarizeBy: sum
+		sourceColumn: variable_target_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column band_key
+		dataType: string
+		lineageTag: 2b90fe85-9c13-4d11-b964-a73508ba11e8
+		summarizeBy: none
+		sourceColumn: band_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column target_cash_usd_constant
+		dataType: double
+		lineageTag: 5194cc9e-0a3c-4400-afbb-25c0da8dc081
+		summarizeBy: sum
+		sourceColumn: target_cash_usd_constant
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column peer_percentile
+		dataType: double
+		lineageTag: 0b6197a0-10b5-42db-ad52-3e9c4118f289
+		summarizeBy: sum
+		sourceColumn: peer_percentile
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column vs_peer_average
+		dataType: double
+		lineageTag: 5037d33b-00f7-4cd7-acba-4e1896c61438
+		summarizeBy: sum
+		sourceColumn: vs_peer_average
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column fte
+		dataType: double
+		lineageTag: c22458d5-f3ea-4d37-aa56-60cef6c29f2d
+		summarizeBy: sum
+		sourceColumn: fte
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition Facts_HeadCount = m
+		mode: import
+		queryGroup: 'Factual Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.f_headcount"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,66 @@
+table Dim_Job
+	lineageTag: 650e9da2-205b-46bf-8cdb-4172d419cc37
+
+	column job_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 90db3538-ca12-4a99-94ae-b0be16072010
+		summarizeBy: none
+		sourceColumn: job_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_code
+		dataType: string
+		lineageTag: 4fb64abd-0f11-4916-97b5-91d3affed50b
+		summarizeBy: none
+		sourceColumn: job_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_family
+		dataType: string
+		lineageTag: 3e234091-bf23-4716-98dd-ac8c8a2c7c9a
+		summarizeBy: none
+		sourceColumn: job_family
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_level
+		dataType: string
+		lineageTag: 4bb980d9-6709-45c4-b83e-8d918362cbec
+		summarizeBy: none
+		sourceColumn: job_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column track
+		dataType: string
+		lineageTag: b271ecb4-143f-444b-9a63-70b501089234
+		summarizeBy: none
+		sourceColumn: track
+
+		annotation SummarizationSetBy = Automatic
+
+	column level_order
+		dataType: int64
+		formatString: 0
+		lineageTag: e3c7ce15-2597-4156-a677-a44bbcec3eb7
+		summarizeBy: none
+		sourceColumn: level_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Job = m
+		mode: import
+		queryGroup: 'Dimensional Tables'
+		source =
+				let
+				  Origen = PostgreSQL.Database("localhost:5432", "mpg_analytics", [Query = "SELECT * FROM analytics.d_job"])
+				in
+				  Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
