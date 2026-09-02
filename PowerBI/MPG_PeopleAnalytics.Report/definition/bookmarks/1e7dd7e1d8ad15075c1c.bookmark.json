@@ -1,0 +1,483 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "SS - 1 - Close About this page",
+  "name": "1e7dd7e1d8ad15075c1c",
+  "options": {
+    "applyOnlyToTargetVisuals": true,
+    "targetVisualNames": [
+      "4dcf90cf1e67708494f1",
+      "eaa92bc17bb62b57cfce",
+      "d7d6590d97062d937dd9",
+      "ee1e877032edce4cd058",
+      "937b880ac7cb4b931640"
+    ],
+    "suppressActiveSection": true,
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.3",
+    "activeSection": "3162f77b4f748a67ebe9",
+    "sections": {
+      "3162f77b4f748a67ebe9": {
+        "visualContainers": {
+          "a12a831dfafbf138a812": {
+            "singleVisual": {
+              "visualType": "image",
+              "objects": {}
+            }
+          },
+          "51a0d04557bb46fed8a4": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "40997281b0632222b60c": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          },
+          "4dcf90cf1e67708494f1": {
+            "singleVisual": {
+              "visualType": "actionButton",
+              "objects": {}
+            }
+          },
+          "ee1e877032edce4cd058": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "4827f3aab5f5af61829e": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "eaa92bc17bb62b57cfce": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "e00e4eadf8241e3b9033": {
+            "singleVisual": {
+              "visualType": "pageNavigator",
+              "objects": {}
+            }
+          },
+          "5d6b55f04a37d347392d": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "e1f102ea81b17cf8db63",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Last Data Refresh"
+                    }
+                  },
+                  "howCreated": 0
+                }
+              ]
+            },
+            "singleVisual": {
+              "visualType": "cardVisual",
+              "objects": {}
+            }
+          },
+          "d7d6590d97062d937dd9": {
+            "singleVisual": {
+              "visualType": "textbox",
+              "objects": {}
+            }
+          },
+          "4e8405faf824567cafa0": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "824f9b6e6d37a8907151",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Headcount"
+                    }
+                  },
+                  "howCreated": 0
+                }
+              ]
+            },
+            "singleVisual": {
+              "visualType": "card",
+              "objects": {},
+              "orderBy": [
+                {
+                  "Direction": 2,
+                  "Expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Headcount"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "937b880ac7cb4b931640": {
+            "singleVisual": {
+              "visualType": "shape",
+              "objects": {}
+            }
+          },
+          "7a7c1dc11370aa5a6f58": {
+            "filters": {
+              "byExpr": [
+                {
+                  "name": "3af61faeaccd933356f3",
+                  "type": "Advanced",
+                  "filter": {
+                    "Version": 2,
+                    "From": [
+                      {
+                        "Name": "_",
+                        "Entity": "_Measures",
+                        "Type": 0
+                      }
+                    ],
+                    "Where": [
+                      {
+                        "Condition": {
+                          "Comparison": {
+                            "ComparisonKind": 2,
+                            "Left": {
+                              "Measure": {
+                                "Expression": {
+                                  "SourceRef": {
+                                    "Source": "_"
+                                  }
+                                },
+                                "Property": "Average Headcount LTM"
+                              }
+                            },
+                            "Right": {
+                              "Literal": {
+                                "Value": "30L"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Average Headcount LTM"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "4ec3484a35d209d2691f",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dim_Location"
+                        }
+                      },
+                      "Property": "city"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "22411ccfac628c52f525",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dim_Job"
+                        }
+                      },
+                      "Property": "job_code"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "d0404cceb2f67b8c92c2",
+                  "type": "Categorical",
+                  "expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Dim_Job"
+                        }
+                      },
+                      "Property": "job_level"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "0250dce04bbfbe1b0e8a",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Headcount"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "c2520d9293b9db7d1be6",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Voluntary Exits LTM"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "c3586c6b5958c8b05799",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Expected Exits LTM"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "18b6262000cc004f8f64",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Attrition vs Baseline"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "367e7037cd00a2882ab5",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Attrition p-value"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "55d85f1bb41795468227",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Weighted Average TTC Compa-Ratio"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "60366d3d63657e05f71b",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Average Span of Control"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "32226fc6515d2f09a938",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Incumbent Headcount"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "d612e1b635394d350b09",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Incumbent Peer Percentile"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "29aca7c9bbbf26c8ba7e",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Recent Hire Headcount"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "f3d3a3f25ff1345f00e7",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Recent Hire Peer Percentile"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "a69641a06c0756d897b8",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Flag Pay Adjustment"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "f2ba9c8e07970c50becd",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Flag Internal Equity"
+                    }
+                  },
+                  "howCreated": 0
+                },
+                {
+                  "name": "41c96fd6d9bf8fc3ba53",
+                  "type": "Advanced",
+                  "expression": {
+                    "Measure": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Measures"
+                        }
+                      },
+                      "Property": "Flag Organisational"
+                    }
+                  },
+                  "howCreated": 0
+                }
+              ]
+            },
+            "singleVisual": {
+              "visualType": "tableEx",
+              "objects": {}
+            }
+          }
+        }
+      }
+    },
+    "objects": {
+      "merge": {
+        "outspacePane": [
+          {
+            "properties": {
+              "expanded": {
+                "expr": {
+                  "Literal": {
+                    "Value": "false"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "54896247d6f4793d7632",
+  "position": {
+    "x": 42.654028436018955,
+    "y": 685.87677725118476,
+    "z": 34000,
+    "height": 180.85308056872037,
+    "width": 576.6824644549763,
+    "tabOrder": 34000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "São Paulo · Sales IC3–IC4-M1 — not on the action list",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI, system-ui, sans-serif",
+                      "fontSize": "14pt",
+                      "color": "#001552"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "On base salary this is the most under-paid population in the company. On ",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI, system-ui, sans-serif",
+                      "fontSize": "12pt",
+                      "color": "#667085"
+                    }
+                  },
+                  {
+                    "value": "total target cash",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontFamily": "Segoe UI, system-ui, sans-serif",
+                      "fontSize": "12pt",
+                      "color": "#667085"
+                    }
+                  },
+                  {
+                    "value": " it sits at market, because a 41 % variable target meets a 25 % market norm — and its attrition runs at 1.17× the baseline, inside the noise. An analysis reading base pay alone recommends a raise for 122 people who were never underpaid.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI, system-ui, sans-serif",
+                      "fontSize": "12pt",
+                      "color": "#667085"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "4f3beef916ec83238f4c",
+  "displayName": "Where the exposure is",
+  "displayOption": "FitToPage",
+  "height": 1080,
+  "width": 1920,
+  "visualInteractions": [
+    {
+      "source": "e4e06ab18d415441ac97",
+      "target": "237330b901568c30def1",
+      "type": "NoFilter"
+    }
+  ]
+}

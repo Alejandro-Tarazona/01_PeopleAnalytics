@@ -1,0 +1,206 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "d7d6590d97062d937dd9",
+  "position": {
+    "x": 40,
+    "y": 216.16702355460393,
+    "z": 37250,
+    "height": 755,
+    "width": 737,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "About this page · Segment scan (export)",
+                    "textStyle": {
+                      "fontWeight": "bold",
+                      "fontSize": "18pt"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "This is not a report page",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#9cbce8"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "It is the export contract. PowerBI/queries/segment_scan.dax defines its grain, its columns and its materiality filter, and tests/test_reconciliation.py compares every cell of it against validation/reference_rule.py, an independent implementation of the same rule written in pandas."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Power BI Desktop has no XMLA endpoint without Premium capacity, so Python cannot query this model directly. The bridge is a file: export this table to data/exports/segment_scan_pbi.csv and the test suite reads it."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Before you touch anything here"
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Every measure on this page is formatted as a plain decimal — no percent signs, no currency symbols, no thousands separators. The export writes what is displayed, and a reconciliation that trips over $46,622 is testing the export dialog rather than the model. Changing a format here breaks the test suite."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "It must stay a table, not a matrix. A matrix nests the three key columns into a hierarchy and exports blanks for repeated levels. A table gives one flat row per cell, which is the grain the rule works at."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Totals off. A totals row is not a cell and has nothing to be compared against."
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "To produce the export",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#9cbce8"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": ""
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Rebuild the database, refresh the model, select the table, Export data → Data with current layout → .csv, save it over data/exports/segment_scan_pbi.csv, then run pytest."
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "isHidden": true
+}

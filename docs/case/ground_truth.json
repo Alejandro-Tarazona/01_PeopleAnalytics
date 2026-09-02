@@ -43,7 +43,7 @@
       "priority": "high",
       "root_cause": "Pay position sustained below market",
       "correct_action": "Targeted salary adjustment for the segment",
-      "description": "Strong, consistent signal. Sustained pay drift: mean compa-ratio 0.85 with 86% of the segment below band minimum, and voluntary attrition at 2.6x the company baseline.",
+      "description": "Strong, consistent signal. Sustained pay drift: mean compa-ratio 0.85 and voluntary attrition at 2.4x the company baseline. Only 15% of the segment sits below band minimum, because the band floor is 80% of midpoint: the drift is in the whole distribution, not in a tail.",
       "definition": {
         "city": "Bogotá",
         "job_code": "DAT",
@@ -60,7 +60,7 @@
         "voluntary_attrition_ltm": 0.3465,
         "attrition_vs_baseline": 2.57,
         "mean_base_salary_usd": 46622,
-        "share_below_band": 0.86
+        "share_below_band": 0.153
       },
       "expected_rule": "pay_adjustment"
     },
@@ -87,7 +87,7 @@
         "voluntary_attrition_ltm": 0.1222,
         "attrition_vs_baseline": 0.91,
         "mean_base_salary_usd": 172480,
-        "share_below_band": 0.222,
+        "share_below_band": 0.0,
         "cohort_incumbents_3y_plus": {
           "n": 44,
           "mean_compa_ratio": 0.912
@@ -126,7 +126,7 @@
         "attrition_vs_baseline": 1.17,
         "attrition_vs_own_region": 0.96,
         "mean_base_salary_usd": 64214,
-        "share_below_band": 0.623
+        "share_below_band": 0.066
       },
       "expected_rule": null
     },
@@ -137,7 +137,7 @@
       "priority": "none",
       "root_cause": "Excessive span of control (>12 direct reports)",
       "correct_action": "Organisational intervention: add a supervisory layer",
-      "description": "SECOND DESIGNED DISTRACTOR. Attrition at 2.4x the baseline with a compa-ratio of 1.01 and only 4% of the segment below band. The cause is organisational, not financial: span of control of 15.1 against 6.7 across the rest of the company.",
+      "description": "SECOND DESIGNED DISTRACTOR. Attrition at 2.1x the baseline with a compa-ratio of 1.01 and nobody below band. The cause is organisational, not financial: span of control of 15.1 against 6.7 across the rest of the company.",
       "definition": {
         "city": "Singapore",
         "job_code": "RSK",
@@ -153,7 +153,7 @@
         "voluntary_attrition_ltm": 0.3295,
         "attrition_vs_baseline": 2.44,
         "mean_base_salary_usd": 77779,
-        "share_below_band": 0.04
+        "share_below_band": 0.0
       },
       "expected_rule": "organisational"
     }

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "4f47ef623b24115d2cea",
+  "displayName": "The Scan",
+  "displayOption": "FitToPage",
+  "height": 1080,
+  "width": 1920,
+  "visualInteractions": [
+    {
+      "source": "6a3266d1d1756ab8954c",
+      "target": "b7ef74636189df549f83",
+      "type": "NoFilter"
+    }
+  ]
+}

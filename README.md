@@ -61,7 +61,7 @@ purpose.
 | 4 · Semantic model (PBIP/TMDL), Power Query cleansing and DAX measures | **Complete** |
 | 5 · Hierarchical RLS and minimum group size rule | **Complete** |
 | 6 · Python ↔ DAX reconciliation and detection scoring | **Complete** |
-| 7 · Three-page report | Pending |
+| 7 · Four-page Power BI report | **Complete** |
 | 8 · Executive presentation | Pending |
 
 ---
@@ -112,15 +112,19 @@ Four anomalies are built into the data. **Only two should be acted on.**
 
 | Seg | Segment | HC | Base compa | TTC compa | Below band | Span | Attrition | vs. baseline | Verdict |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| **A** | Data & Analytics IC3–IC4 · Bogotá | 150 | **0.85** | 0.85 | 86 % | 7.9 | 34.7 % | **2.57×** | **Detect — high** |
-| **B** | Engineering IC5 · Dublin | 90 | 0.99 | 0.99 | 22 % | 7.6 | 12.2 % | 0.91× | **Detect — medium** |
-| **C** | Sales IC3–M1 · São Paulo | 122 | 0.88 | **0.99** | 62 % | 5.0 | 15.8 % | 1.17× | **Dismiss** |
-| **D** | Risk & Compliance IC2 · Singapore | 100 | 1.01 | 1.01 | 4 % | **15.1** | 32.9 % | **2.44×** | **Dismiss** |
+| **A** | Data & Analytics IC3–IC4 · Bogotá | 150 | **0.85** | 0.85 | 15 % | 7.9 | 34.7 % | **2.57×** | **Detect — high** |
+| **B** | Engineering IC5 · Dublin | 90 | 0.99 | 0.99 | 0 % | 7.6 | 12.2 % | 0.91× | **Detect — medium** |
+| **C** | Sales IC3–M1 · São Paulo | 122 | 0.88 | **0.99** | 7 % | 5.0 | 15.8 % | 1.17× | **Dismiss** |
+| **D** | Risk & Compliance IC2 · Singapore | 100 | 1.01 | 1.01 | 0 % | **15.1** | 32.9 % | **2.44×** | **Dismiss** |
 
 Company baseline: 13.5 % voluntary attrition, mean compa-ratio 0.98, mean span 6.7.
 
-- **A** is the strong signal: 86 % of the segment sits below band minimum and attrition
-  runs at 2.6× the baseline. This is where a targeted adjustment pays for itself.
+- **A** is the strong signal: a mean compa-ratio of 0.85 with attrition at 2.4× the
+  baseline. Only 15 % of it sits below band minimum — the band floor is 80 % of
+  midpoint, so sustained drift of this size moves the whole distribution without
+  pushing most of it under the floor. Costing the fix to that floor would price it at
+  $35K; lifting the segment to 0.95 of market costs $811K, and that is the number.
+  This is where a targeted adjustment pays for itself, in under five months.
 - **B** is invisible in the segment average, which sits at 0.99. A tenure-cohort cut
   shows incumbents with 3+ years at **0.912** against recent hires at **1.062** — a
   15-point compression gap. Attrition has not reacted yet: an internal equity problem
@@ -129,8 +133,8 @@ Company baseline: 13.5 % voluntary attrition, mean compa-ratio 0.98, mean span 6
   target against a 25 % market norm, so total target cash lands at 0.99. Its 15.8 %
   attrition is *below* LATAM's own 16.4 %. Only an analysis reading base salary in
   isolation flags it.
-- **D** is the **second decoy**: attrition at 2.4× the baseline with a compa-ratio
-  inside band and only 4 % below minimum. The cause is organisational — span of
+- **D** is the **second decoy**: attrition at 2.1× the baseline with a compa-ratio
+  inside band and nobody below minimum. The cause is organisational — span of
   control of 15.1 against 6.7 company-wide. A pay adjustment here would resolve nothing.
 
 Plus ~3 % of employees carrying random compa-ratio deviation with no segment pattern,
@@ -317,5 +321,6 @@ Step 3 comes after step 2 the first time only — the role has to exist before
 | [`docs/case/detection-rule.md`](docs/case/detection-rule.md) | The prioritisation rule: every threshold and why it is what it is |
 | [`docs/case/reconciliation.md`](docs/case/reconciliation.md) | How the model's output is checked and scored, and what that does not prove |
 | [`docs/case/rls.md`](docs/case/rls.md) | Row-level security, the minimum group size rule, and the limits of both |
+| [`docs/case/report.md`](docs/case/report.md) | What each report page is for, and what is deliberately left off it |
 | [`docs/pbi-model.md`](docs/pbi-model.md) | The semantic model: tables, relationships, and the reasoning behind each design decision |
 | [`CLAUDE.md`](CLAUDE.md) | Conventions this repository is held to |

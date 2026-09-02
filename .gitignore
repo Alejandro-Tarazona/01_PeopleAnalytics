@@ -18,3 +18,7 @@ Thumbs.db
 # Claude Code — personal, per-machine
 CLAUDE.local.md
 .claude/settings.local.json
+
+# Q&A linguistic synonyms. Desktop regenerates these on every save - 20k lines of
+# "State": "Generated" that nobody curates and that bury every real model diff.
+PowerBI/**/definition/cultures/

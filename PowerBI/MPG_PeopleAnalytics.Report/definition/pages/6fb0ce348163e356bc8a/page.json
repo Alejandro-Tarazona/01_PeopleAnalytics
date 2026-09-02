@@ -1,8 +1,20 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "6fb0ce348163e356bc8a",
-  "displayName": "Página 1",
+  "displayName": "Global Overview",
   "displayOption": "FitToPage",
   "height": 1080,
-  "width": 1920
+  "width": 1920,
+  "visualInteractions": [
+    {
+      "source": "92d22bcc9051c2fa1c43",
+      "target": "eddea84ebb8a2c36bf65",
+      "type": "NoFilter"
+    },
+    {
+      "source": "92d22bcc9051c2fa1c43",
+      "target": "5729863a3b8dc41d5b06",
+      "type": "NoFilter"
+    }
+  ]
 }

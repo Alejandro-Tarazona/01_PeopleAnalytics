@@ -1,0 +1,30 @@
+/// The compa-ratio a targeted adjustment would lift a segment to.
+/// Disconnected from the star, like 'Payroll Increase': it filters nothing and is read
+/// only by the measures that ask for it.
+///
+/// 0.85 to 1.05 in hundredths, defaulting to 0.95 - below the company mean of 0.98,
+/// because the recommendation is to close a gap rather than to overtake the market,
+/// and a default of 1.00 would quietly propose something more expensive than anyone
+/// asked for.
+table 'Compa Target'
+	lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a40
+
+	column 'Compa-Ratio Target'
+		dataType: double
+		formatString: 0.00
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-0c4d8e6b1a41
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Compa Target' = calculated
+		mode: import
+		source = GENERATESERIES ( 0.85, 1.05, 0.01 )
+
+	annotation PBI_Id = CompaTarget

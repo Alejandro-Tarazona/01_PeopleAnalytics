@@ -1,7 +1,7 @@
 model Model
 	culture: es-ES
 	defaultPowerBIDataSourceVersion: powerBI_V3
-	sourceQueryCulture: es-CO
+	sourceQueryCulture: en-US
 	valueFilterBehavior: independent
 	dataAccessOptions
 		legacyRedirects
@@ -38,6 +38,9 @@ ref table Dim_Market_Band
 ref table _Measures
 ref table Dim_Security
 ref table LnFactorial
+ref table 'Payroll Increase'
+ref table 'Refresh Info'
+ref table 'Compa Target'
 
 ref role 'Global HR'
 ref role 'Country HR'

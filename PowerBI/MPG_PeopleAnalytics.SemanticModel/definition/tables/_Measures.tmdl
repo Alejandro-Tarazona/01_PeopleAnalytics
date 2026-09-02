@@ -67,7 +67,7 @@ table _Measures
 			VAR Market = CALCULATE ( SUMX ( Facts_HeadCount, RELATED ( Dim_Market_Band[band_mid_usd] ) ), Dim_Date[date_key] = LastSnapshot )
 			RETURN
 			    IF ( [Headcount] >= 5 || [_Has Compensation Access], DIVIDE ( Pay, Market ) )
-		formatString: 0.00
+		formatString: #,0.00
 		displayFolder: 02 Pay position
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000005
 
@@ -536,6 +536,678 @@ table _Measures
 			    CONCATENATEX ( Fired, [Value1], " + " )
 		displayFolder: 07 Detection
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000039
+
+	/// The signed-in user's display name, for the banner greeting.
+	/// USERPRINCIPALNAME() returns the Windows account in Power BI Desktop and the sign-in
+	/// address in the Service, so the two never look the same. The fallback returns the raw
+	/// principal, which means a reviewer who clones this repository sees their own machine
+	/// account in the banner - worth replacing with a fixed word before anyone else opens it.
+	measure User =
+			VAR Principal = USERPRINCIPALNAME ()
+			RETURN
+			    IF ( Principal = "AURELIO\aleja", "Alejandro Tarazona", Principal )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000071
+
+	/// What "the previous period" means for whatever the user has filtered, as text, so a
+	/// card can label itself instead of carrying a caption that goes stale.
+	/// A single month selected compares against the month before it; anything else - a year,
+	/// a quarter, no date filter at all - compares against the year before. Both readings are
+	/// right for their context and neither is right for the other, which is why this is a
+	/// measure rather than a decision taken once at design time.
+	measure 'Comparison Period' = IF ( HASONEVALUE ( Dim_Date[year_month] ), "vs previous month", "vs previous year" )
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000040
+
+	/// Headcount one period back, on the same basis the current figure uses.
+	/// Nothing here re-implements the snapshot logic: [Headcount] already resolves the last
+	/// month-end inside whatever filter context it is given, so shifting the context with
+	/// PREVIOUSMONTH or PREVIOUSYEAR is enough and the two figures cannot drift apart.
+	measure 'Headcount Previous Period' =
+			IF (
+			    HASONEVALUE ( Dim_Date[year_month] ),
+			    CALCULATE ( [Headcount], PREVIOUSMONTH ( Dim_Date[date] ) ),
+			    CALCULATE ( [Headcount], PREVIOUSYEAR ( Dim_Date[date] ) )
+			)
+		formatString: #,##0
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000041
+
+	/// People added or lost since the comparison period. Blank where there is no comparison
+	/// period to speak of - the first month of the horizon has nothing behind it, and showing
+	/// the whole headcount as growth there would be a fabricated number.
+	measure 'Headcount Change vs Previous Period' =
+			VAR Baseline = [Headcount Previous Period]
+			RETURN
+			    IF ( NOT ISBLANK ( Baseline ), [Headcount] - Baseline )
+		formatString: +#,##0;-#,##0;0
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000042
+
+	/// The same movement as a rate, for the card that has no room for two numbers.
+	measure 'Headcount Change % vs Previous Period' = DIVIDE ( [Headcount Change vs Previous Period], [Headcount Previous Period] )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000043
+
+	/// Annualised base payroll one period back, in constant currency like its present-day
+	/// counterpart. Constant currency matters more here than anywhere else on the page: a
+	/// period-over-period comparison at actual rates reports an exchange movement as a pay
+	/// decision, which is the single most common way a payroll trend chart misleads.
+	measure 'Annualised Payroll USD Previous Period' =
+			IF (
+			    HASONEVALUE ( Dim_Date[year_month] ),
+			    CALCULATE ( [Annualised Payroll USD], PREVIOUSMONTH ( Dim_Date[date] ) ),
+			    CALCULATE ( [Annualised Payroll USD], PREVIOUSYEAR ( Dim_Date[date] ) )
+			)
+		formatString: $#,##0
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000044
+
+	/// Payroll movement in dollars. Blank with no comparison period, for the same reason as
+	/// the headcount equivalent.
+	measure 'Annualised Payroll USD Change vs Previous Period' =
+			VAR Baseline = [Annualised Payroll USD Previous Period]
+			RETURN
+			    IF ( NOT ISBLANK ( Baseline ), [Annualised Payroll USD] - Baseline )
+		formatString: +$#,##0;-$#,##0;$0
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000045
+
+	/// Payroll movement as a rate. Read beside the headcount rate rather than alone: payroll
+	/// rising faster than headcount is a mix or merit story, and the two rates together say
+	/// which one without needing a third measure.
+	measure 'Annualised Payroll USD Change % vs Previous Period' =
+			DIVIDE ( [Annualised Payroll USD Change vs Previous Period],
+			         [Annualised Payroll USD Previous Period] )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000046
+
+	/// The rate currently selected on the Payroll Increase slicer, defaulting to the 6% the
+	/// executive committee has been asked to approve.
+	/// It lives here rather than on the parameter table because every measure in this model
+	/// lives in _Measures. Power BI writes this measure onto the parameter table when it
+	/// builds a what-if parameter itself; that convention is not this repository's.
+	measure 'Payroll Increase % Value' = SELECTEDVALUE ( 'Payroll Increase'[Payroll Increase %], 0.06 )
+		formatString: 0.0%
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000047
+
+	/// Annualised cost of raising every base salary in the current filter context by the
+	/// selected rate. The gross number the proposal is asking for.
+	measure 'Blanket Increase Cost USD' = [Annualised Payroll USD] * [Payroll Increase % Value]
+		formatString: $#,##0
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000048
+
+	/// Annualised base payroll once the increase is applied. Shown next to the current figure
+	/// so the increase is read as a share of the whole rather than as a headline in isolation.
+	measure 'Payroll USD After Blanket Increase' = [Annualised Payroll USD] * ( 1 + [Payroll Increase % Value] )
+		formatString: $#,##0
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000049
+
+	/// Where the population would sit against the market midpoint after the increase.
+	/// Weighted the same way as its present-day counterpart, and suppressed below five people
+	/// for the same reason: at that size the ratio identifies an individual's pay.
+	measure 'Weighted Average Compa-Ratio After Blanket Increase' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR IncreaseRate = [Payroll Increase % Value]
+			VAR Pay = CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
+			VAR Market = CALCULATE ( SUMX ( Facts_HeadCount, RELATED ( Dim_Market_Band[band_mid_usd] ) ), Dim_Date[date_key] = LastSnapshot )
+			RETURN
+			    IF (
+			        [Headcount] >= 5 || [_Has Compensation Access],
+			        DIVIDE ( Pay * ( 1 + IncreaseRate ), Market )
+			    )
+		formatString: 0.00
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000050
+
+	/// The share of a blanket increase that lands on people who are already at or above their
+	/// band minimum.
+	/// This is the cost of not targeting. A blanket adjustment is defended on the argument
+	/// that people are underpaid, and this measure says how much of the money goes to people
+	/// the argument does not describe. It moves with the slicer and with every filter on the
+	/// page, so the figure for the LATAM hub at 6% is one click away.
+	measure 'Blanket Increase Spend Above Band Minimum USD' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR IncreaseRate = [Payroll Increase % Value]
+			RETURN
+			    CALCULATE (
+			        SUMX (
+			            FILTER (
+			                Facts_HeadCount,
+			                Facts_HeadCount[base_salary_usd_constant] >= RELATED ( Dim_Market_Band[band_min_usd] )
+			            ),
+			            Facts_HeadCount[base_salary_usd_constant] * IncreaseRate
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: $#,##0
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000051
+
+	/// The remainder: the part of a blanket increase that does reach someone paid below their
+	/// band minimum. The two halves sum to the gross cost, which is the point - they are meant
+	/// to be read as a split, not as two independent figures.
+	measure 'Blanket Increase Spend Below Band Minimum USD' = [Blanket Increase Cost USD] - [Blanket Increase Spend Above Band Minimum USD]
+		formatString: $#,##0
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000052
+
+	/// People who remain paid below their band minimum once the blanket increase is applied.
+	/// The other half of the argument. A blanket rate large enough to fix the worst-paid
+	/// segment overpays everyone else; a rate the budget can carry leaves that segment where
+	/// it was. Bogota Data & Analytics sits at a compa-ratio of 0.85 with 86% of the segment
+	/// below minimum, and six per cent does not move it out.
+	measure 'Headcount Still Below Band Minimum After Increase' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR IncreaseRate = [Payroll Increase % Value]
+			RETURN
+			    CALCULATE (
+			        COUNTROWS (
+			            FILTER (
+			                Facts_HeadCount,
+			                Facts_HeadCount[base_salary_usd_constant] * ( 1 + IncreaseRate )
+			                    < RELATED ( Dim_Market_Band[band_min_usd] )
+			            )
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: #,##0
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000053
+
+	/// The same population as a share, so it can be read directly against
+	/// [% Below Band Minimum] and the gap between them is the increase's actual effect.
+	measure '% Below Band Minimum After Increase' =
+			IF (
+			    [Headcount] >= 5 || [_Has Compensation Access],
+			    DIVIDE ( [Headcount Still Below Band Minimum After Increase], [Headcount] )
+			)
+		formatString: 0.0%
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000054
+
+	/// The headcount movement as one line of text, arrow included, for the card's reference
+	/// label. Blank where there is no comparison period, so the card shows nothing rather
+	/// than an empty arrow.
+	measure 'Headcount Comparison Label' =
+			VAR Movement = [Headcount Change % vs Previous Period]
+			VAR Shown = ROUND ( Movement, 3 )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Movement ), BLANK (),
+			        Shown = 0, "no change " & [Comparison Period],
+			        UNICHAR ( IF ( Shown > 0, 9650, 9660 ) ) & " "
+			            & FORMAT ( ABS ( Shown ), "0.0%" ) & " " & [Comparison Period]
+			    )
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000060
+
+	/// [Voluntary Attrition % LTM] but blank until the trailing twelve months are actually
+	/// twelve months. For charting only - the detection rule and the reconciliation read the
+	/// unguarded measure and must go on doing so.
+	///
+	/// The rate divides exits over a trailing window by the average headcount across that
+	/// same window, and [Average Headcount LTM] divides by a constant twelve. Early in the
+	/// horizon the window holds fewer than twelve months of snapshots, so the denominator is
+	/// short while the numerator accumulates, and the rate climbs on its own. Measured from
+	/// the source, the series reads 5.6% at 2024-10 and 13.5% at 2026-08 while real monthly
+	/// exits go from about 44 to about 50 - a mild rise drawn as a doubling. The window is
+	/// first complete at 2025-08, which is where an honest line starts.
+	measure 'Voluntary Attrition % LTM Complete Window' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR MonthsInWindow =
+			    CALCULATE (
+			        DISTINCTCOUNT ( Facts_HeadCount[snapshot_date_key] ),
+			        DATESINPERIOD ( Dim_Date[date], LastSnapshotDate, -12, MONTH )
+			    )
+			RETURN
+			    IF ( MonthsInWindow >= 12, [Voluntary Attrition % LTM] )
+		formatString: 0.0%
+		displayFolder: 03 Movement
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000055
+
+	/// The attrition rate one period back, on the same trailing-twelve-month basis.
+	measure 'Voluntary Attrition % LTM Previous Period' =
+			IF (
+			    HASONEVALUE ( Dim_Date[year_month] ),
+			    CALCULATE ( [Voluntary Attrition % LTM], PREVIOUSMONTH ( Dim_Date[date] ) ),
+			    CALCULATE ( [Voluntary Attrition % LTM], PREVIOUSYEAR ( Dim_Date[date] ) )
+			)
+		formatString: 0.0%
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000056
+
+	/// The movement in the attrition rate, as a difference rather than as a ratio.
+	/// 13.8% to 13.5% is minus three tenths of a percentage point. Expressed the way the
+	/// headcount and payroll cards express theirs it would read as minus 2.2%, which is a
+	/// true number and a misleading one: nobody reads a rate card that way, and the two
+	/// framings differ by a factor of seven. Points, and the card says pp.
+	measure 'Voluntary Attrition % LTM Change vs Previous Period' =
+			VAR Baseline = [Voluntary Attrition % LTM Previous Period]
+			RETURN
+			    IF ( NOT ISBLANK ( Baseline ), [Voluntary Attrition % LTM] - Baseline )
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000057
+
+	/// Pay position one period back, weighted the same way as the current figure.
+	measure 'Weighted Average Compa-Ratio Previous Period' =
+			IF (
+			    HASONEVALUE ( Dim_Date[year_month] ),
+			    CALCULATE ( [Weighted Average Compa-Ratio], PREVIOUSMONTH ( Dim_Date[date] ) ),
+			    CALCULATE ( [Weighted Average Compa-Ratio], PREVIOUSYEAR ( Dim_Date[date] ) )
+			)
+		formatString: 0.00
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000058
+
+	/// Movement in pay position, as a difference. A ratio of ratios means nothing to a
+	/// reader, and the quantity people actually discuss is "we moved two points".
+	measure 'Weighted Average Compa-Ratio Change vs Previous Period' =
+			VAR Baseline = [Weighted Average Compa-Ratio Previous Period]
+			RETURN
+			    IF ( NOT ISBLANK ( Baseline ), [Weighted Average Compa-Ratio] - Baseline )
+		formatString: +0.00;-0.00;0.00
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000059
+
+	/// Payroll movement as one line of text for the card's reference label.
+	measure 'Annualised Payroll USD Comparison Label' =
+			VAR Movement = [Annualised Payroll USD Change % vs Previous Period]
+			VAR Shown = ROUND ( Movement, 3 )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Movement ), BLANK (),
+			        Shown = 0, "no change " & [Comparison Period],
+			        UNICHAR ( IF ( Shown > 0, 9650, 9660 ) ) & " "
+			            & FORMAT ( ABS ( Shown ), "0.0%" ) & " " & [Comparison Period]
+			    )
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000061
+
+	/// Attrition movement as one line of text, in percentage points and labelled as such.
+	/// The only card of the four whose direction means something on its own, which is why it
+	/// is also the only one that should ever take colour - conditional formatting on
+	/// [Voluntary Attrition % LTM Change vs Previous Period] greater than zero.
+	measure 'Voluntary Attrition % LTM Comparison Label' =
+			VAR Movement = [Voluntary Attrition % LTM Change vs Previous Period]
+			VAR Shown = ROUND ( Movement, 3 )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Movement ), BLANK (),
+			        Shown = 0, "no change " & [Comparison Period],
+			        UNICHAR ( IF ( Shown > 0, 9650, 9660 ) ) & " "
+			            & FORMAT ( ABS ( Shown ) * 100, "0.0" ) & " pp " & [Comparison Period]
+			    )
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000062
+
+	/// Pay-position movement as one line of text, in ratio points.
+	/// This is the card the stability case was written for: pay position moves in hundredths
+	/// over a month, so a raw comparison is almost always a non-zero number that rounds to
+	/// 0,00 and takes an arrow anyway.
+	measure 'Weighted Average Compa-Ratio Comparison Label' =
+			VAR Movement = [Weighted Average Compa-Ratio Change vs Previous Period]
+			VAR Shown = ROUND ( Movement, 2 )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( Movement ), BLANK (),
+			        Shown = 0, "no change " & [Comparison Period],
+			        UNICHAR ( IF ( Shown > 0, 9650, 9660 ) ) & " "
+			            & FORMAT ( ABS ( Shown ), "0.00" ) & " " & [Comparison Period]
+			    )
+		displayFolder: 08 Trend
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000063
+
+	/// The font colour for the attrition card's comparison label, as a hex string, bound
+	/// through Format by field value.
+	/// Attrition is the only one of the four headline figures whose direction means something
+	/// on its own - headcount or payroll rising is neither good nor bad without context - so
+	/// it is the only card that ever takes colour. Rising is #B04A42; everything else stays
+	/// the neutral #667085.
+	measure 'Conditional Format Voluntary Attrition' = IF ( [Voluntary Attrition % LTM Change vs Previous Period] > 0, "#B04A42", "#667085" )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000068
+
+	/// When the model last refreshed, as the value of a card.
+	/// Reads the stamp frozen into 'Refresh Info' at refresh time rather than calling NOW()
+	/// here, which would report when the reader opened the page.
+	/// Returns the timestamp and nothing else - no "Last data refresh:" prefix. The card
+	/// already carries that as its title, and a measure that repeats its own label cannot be
+	/// placed anywhere the label is not wanted.
+	/// Formatted yyyy-MM-dd HH:mm: all numeric, so it reads the same on a machine in any
+	/// locale. A caption with a month name would come out in Spanish on this model, whose
+	/// culture is es-ES, inside a report written in English.
+	measure 'Last Data Refresh' =
+			VAR Stamp = MAX ( 'Refresh Info'[refreshed_at] )
+			RETURN
+			    IF ( NOT ISBLANK ( Stamp ), FORMAT ( Stamp, "yyyy-MM-dd HH:mm" ) )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000064
+
+	/// How many city / job / level cells the rule actually looks at. The denominator that
+	/// stops "four segments" being read as "four out of a handful".
+	///
+	/// Counted over the trailing twelve months, not at the last month-end, because that is
+	/// the window every figure in the rule is computed over. Counting the closing snapshot
+	/// instead returns 722 - it drops every cell that existed during the year and was empty
+	/// by August, which are exactly the cells an attrition analysis should not lose sight of.
+	///
+	/// The union with the movement fact adds one cell: a cell whose last leaver went before
+	/// any surviving snapshot, so it has exits and no exposure. One row in 746, and it is the
+	/// difference between this card agreeing with validation/reference_rule.py and quietly
+	/// disagreeing with it.
+	measure 'Cells Scanned' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR LastSnapshotDate = CALCULATE ( MAX ( Dim_Date[date] ), Dim_Date[date_key] = LastSnapshot )
+			VAR Window = DATESINPERIOD ( Dim_Date[date], LastSnapshotDate, -12, MONTH )
+			VAR Staffed =
+			    CALCULATETABLE (
+			        SUMMARIZE (
+			            Facts_HeadCount,
+			            Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
+			        ),
+			        Window
+			    )
+			VAR Departed =
+			    CALCULATETABLE (
+			        SUMMARIZE (
+			            Facts_Movement,
+			            Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
+			        ),
+			        Window,
+			        Facts_Movement[event_type] = "Voluntary Exit"
+			    )
+			RETURN
+			    COUNTROWS ( DISTINCT ( UNION ( Staffed, Departed ) ) )
+		formatString: #,##0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000065
+
+	/// How many cells trip at least one of the three rules. A cell tripping two counts once:
+	/// the question this answers is how many places need a conversation, not how many
+	/// diagnoses were issued.
+	/// This is the most expensive measure in the model - it evaluates all three rules, and
+	/// so the Poisson tail, once per cell. On a card it is fine; do not put it on an axis.
+	measure 'Segments With A Rule Fired' =
+			VAR Cells_rules =
+			    ADDCOLUMNS (
+			        SUMMARIZE (
+			            Facts_HeadCount,
+			            Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
+			        ),
+			        "@Rules",
+			            [Flag Pay Adjustment] + [Flag Internal Equity] + [Flag Organisational]
+			    )
+			RETURN
+			    COUNTROWS ( FILTER ( Cells_rules, [@Rules] > 0 ) )
+		formatString: #,##0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000066
+
+	/// [Attrition vs Baseline] blanked below the thirty-person materiality floor, for the
+	/// city-by-job-family matrix.
+	/// The floor belongs in the measure rather than in the visual's filter pane for two
+	/// reasons. A visual-level filter on a measure is not evaluated per cell in a matrix, so
+	/// it silently fails to exclude anything. And a blank cell takes no conditional
+	/// background, which is the actual risk: a ratio of 2.29 computed on eight people,
+	/// painted navy, reads as a finding.
+	measure 'Attrition vs Baseline Material' = IF ( [Headcount] >= 30, [Attrition vs Baseline] )
+		formatString: 0.00
+		displayFolder: 03 Movement
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000067
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// The exits card's sub-label: the same count expressed as a rate, so the headline number
+	/// carries its own denominator instead of needing a second card.
+	measure 'Voluntary Exits LTM Caption' = FORMAT ( [Voluntary Attrition % LTM], "0.0%" ) & " of average headcount"
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000069
+
+	/// The detection card's sub-label. Four segments means nothing without the population it
+	/// was drawn from; four out of 746 is the sentence.
+	measure 'Segments With A Rule Fired Caption' = "of " & FORMAT ( [Cells Scanned], "#,##0" ) & " cells scanned"
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000070
+
+	/// How many cells clear the thirty-person floor and are therefore worth a verdict.
+	/// Sits between [Cells Scanned] and [Segments With A Rule Fired] and is the number that
+	/// makes the other two legible: 746 scanned, 11 large enough to judge, 4 that fire. The
+	/// middle figure is the one a reader silently assumes and usually assumes wrong.
+	/// Cheaper than the fired count - it stops at headcount and never evaluates a rule.
+	measure 'Cells Above Materiality Floor' =
+			VAR Cells_material =
+			    ADDCOLUMNS (
+			        SUMMARIZE (
+			            Facts_HeadCount,
+			            Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
+			        ),
+			        "@Exposure", [Average Headcount LTM]
+			    )
+			RETURN
+			    COUNTROWS ( FILTER ( Cells_material, [@Exposure] >= 30 ) )
+		formatString: #,##0
+		displayFolder: 07 Detection
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000072
+
+	/// Row background for the scan table, as a hex string, bound through Format by field
+	/// value. Four rows out of eleven carry a verdict and the other seven exist to show what
+	/// the rule declined to flag; tinting the four is what stops a reader scanning the table
+	/// as an undifferentiated list.
+	measure 'Conditional Format Rule Fired' = IF ( NOT ISBLANK ( [Detection Rule Fired] ), "#F4F8FD", "#FFFFFF" )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000073
+
+	/// Point colour for the scan scatter, as a hex string, bound through Data colors ->
+	/// Format by field value.
+	/// The scatter's Legend well takes a column and [Detection Rule Fired] is a measure, so
+	/// there is no way to colour the points by which rule fired through the field wells at
+	/// all. Conditional formatting is the only route, and it costs the automatic legend -
+	/// the page needs four coloured squares and four words placed by hand.
+	/// Ordered deliberately: a cell can trip more than one rule, and where that happens the
+	/// pay verdict is the one shown, because it is the one that costs money.
+	measure 'Conditional Format Detection Rule' =
+			SWITCH (
+			    TRUE (),
+			    [Flag Pay Adjustment] = 1, "#001552",
+			    [Flag Internal Equity] = 1, "#3E72C4",
+			    [Flag Organisational] = 1, "#6B97D8",
+			    "#C9DAF3"
+			)
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000074
+
+	/// The compa-ratio currently selected on the Compa Target slicer, defaulting to 0.95.
+	/// Lives in _Measures rather than on the parameter table, like its counterpart in
+	/// 09 Simulation, because that is where every measure in this model lives.
+	measure 'Compa-Ratio Target Value' = SELECTEDVALUE ( 'Compa Target'[Compa-Ratio Target], 0.95 )
+		formatString: 0.00
+		displayFolder: 09 Simulation
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000075
+
+	/// Annualised cost of lifting everyone paid below the selected compa-ratio up to it.
+	/// The number a targeted adjustment actually costs, and the counterpart to
+	/// [Blanket Increase Cost USD] on the overview.
+	///
+	/// [Cost to Band Minimum] answers a different and much weaker question. The band minimum
+	/// sits at 80% of midpoint across this survey, so a segment averaging 0.85 has only its
+	/// lower tail beneath the floor. Lifting Bogota Data & Analytics to its band minimum
+	/// costs $34,545 and leaves the segment at 0.85; lifting it to 0.95 costs $811,000. Only
+	/// the second corresponds to the action being recommended.
+	/// Nobody is moved downwards - MAX(..., 0) means people already above the target keep
+	/// what they earn, which is how an adjustment actually works and why this is not simply
+	/// the gap between the segment average and the target.
+	measure 'Cost to Target Compa-Ratio' =
+			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
+			VAR Target = [Compa-Ratio Target Value]
+			RETURN
+			    CALCULATE (
+			        SUMX (
+			            Facts_HeadCount,
+			            MAX (
+			                Target * RELATED ( Dim_Market_Band[band_mid_usd] )
+			                    - Facts_HeadCount[base_salary_usd_constant],
+			                0
+			            )
+			        ),
+			        Dim_Date[date_key] = LastSnapshot
+			    )
+		formatString: $#,##0
+		displayFolder: 05 Economics
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000076
+
+	/// Months for a targeted adjustment to pay for itself, assuming it brings the segment's
+	/// attrition down to the company baseline.
+	/// The same arithmetic as [Payback Months] but costed against [Cost to Target
+	/// Compa-Ratio] rather than against the band minimum, so the payback belongs to the
+	/// intervention the page is recommending.
+	/// Blank where attrition is already at or below the baseline: there is no avoided
+	/// exposure to recover and a payback figure there would be invented. Dublin is the case
+	/// in point - rule 2 catches it before attrition reacts, which is the whole argument for
+	/// acting early and is also why this measure has nothing to say about it.
+	measure 'Payback Months at Target' =
+			VAR ExcessRate = [Voluntary Attrition % LTM] - [Company Attrition Baseline]
+			VAR AvoidedExposure =
+			    DIVIDE ( ExcessRate, [Voluntary Attrition % LTM] ) * [Attrition Exposure USD]
+			RETURN
+			    IF (
+			        ExcessRate > 0,
+			        DIVIDE ( [Cost to Target Compa-Ratio], DIVIDE ( AvoidedExposure, 12 ) )
+			    )
+		formatString: 0.0
+		displayFolder: 05 Economics
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000077
+
+	/// Annualised cost of the adjustments this analysis recommends: every cell where the pay
+	/// or the equity rule fired, lifted to the selected compa-ratio target.
+	/// Excludes organisational findings on purpose - their lever is a supervisory layer, not
+	/// money, and folding them into a spend figure would misstate both.
+	/// Evaluates all three rules once per cell, so it is one of the slower measures in the
+	/// model. Fine on a card; do not put it on an axis.
+	measure 'Recommended Spend USD' =
+			VAR Cells_funded =
+			    FILTER (
+			        ADDCOLUMNS (
+			            SUMMARIZE (
+			                Facts_HeadCount,
+			                Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
+			            ),
+			            "@Funded", [Flag Pay Adjustment] + [Flag Internal Equity]
+			        ),
+			        [@Funded] > 0
+			    )
+			RETURN
+			    SUMX ( Cells_funded, CALCULATE ( [Cost to Target Compa-Ratio] ) )
+		formatString: $#,##0
+		displayFolder: 05 Economics
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000078
+
+	/// Attrition exposure carried by the cells the recommended spend would act on. Read as
+	/// the denominator of [Recommended Spend USD]: what the money is bought against.
+	/// Scoped identically, so the two cannot describe different populations.
+	measure 'Exposure Addressed USD' =
+			VAR Cells_funded =
+			    FILTER (
+			        ADDCOLUMNS (
+			            SUMMARIZE (
+			                Facts_HeadCount,
+			                Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
+			            ),
+			            "@Funded", [Flag Pay Adjustment] + [Flag Internal Equity]
+			        ),
+			        [@Funded] > 0
+			    )
+			RETURN
+			    SUMX ( Cells_funded, CALCULATE ( [Attrition Exposure USD] ) )
+		formatString: $#,##0
+		displayFolder: 05 Economics
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000079
+
+	/// What a pay rise would cost this segment, or the fact that money is not the lever.
+	/// The name is the row label the multi-row card displays, which is why it reads as a
+	/// phrase rather than as a measure name - renaming it would change what the reader sees
+	/// on the card, so it stays.
+	///
+	/// It keys off the organisational flag rather than off a blank. The first version tested
+	/// ISBLANK([% Above Band Maximum]), which worked only because COUNTROWS over an empty
+	/// filter returns blank and nobody in Singapore Risk & Compliance sits above their band
+	/// maximum. One person crossing that line would have turned the words "Not the lever"
+	/// into a percentage, on a card whose whole argument is that this segment is not a pay
+	/// problem.
+	measure 'Cost of a pay rise' = IF ( [Flag Organisational] = 1, "Not the lever", [Cost to Target Label] )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000086
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Pay position for an action card, as text with the locale pinned to en-US.
+	measure 'Compa-Ratio Today Label' = FORMAT ( [Weighted Average Compa-Ratio], "0.00", "en-US" )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000080
+
+	/// The targeted adjustment's cost for an action card, as text with the locale pinned.
+	measure 'Cost to Target Label' = FORMAT ( [Cost to Target Compa-Ratio], "$#,##0", "en-US" )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000081
+
+	/// Attrition exposure for an action card, as text with the locale pinned.
+	measure 'Exposure Carried Label' = FORMAT ( [Attrition Exposure USD], "$#,##0", "en-US" )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000082
+
+	/// Payback for an action card, or the reason there is none.
+	/// [Payback Months at Target] is blank where attrition sits at or below the baseline,
+	/// and a blank line on a card reads as a missing number rather than as the finding it
+	/// is. Dublin was caught before attrition reacted; the card should say so.
+	measure 'Payback Label' =
+			VAR Months = [Payback Months at Target]
+			RETURN
+			    IF (
+			        ISBLANK ( Months ),
+			        "No attrition yet",
+			        FORMAT ( Months, "0.0", "en-US" ) & " months"
+			    )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000083
+
+	/// Where the long-tenured cohort sits against the recent hires, as one line: p25 -> p74.
+	/// Rule 2 is the comparison between these two numbers, not either one alone, so the card
+	/// shows them as a single reading. Blank unless both cohorts clear twenty people, which
+	/// is the population the rule itself requires before the comparison means anything.
+	measure 'Cohort Percentile Gap' =
+			VAR Incumbents = [Incumbent Peer Percentile]
+			VAR Recent = [Recent Hire Peer Percentile]
+			RETURN
+			    IF (
+			        [Incumbent Headcount] >= 20 && [Recent Hire Headcount] >= 20,
+			        "p" & FORMAT ( Incumbents * 100, "0", "en-US" )
+			            & " " & UNICHAR ( 8594 ) & " p"
+			            & FORMAT ( Recent * 100, "0", "en-US" )
+			    )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000084
+
+	/// Span of control against the company mean, as one line: 15.1 vs 6.7.
+	/// Rule 3 fires on the ratio between the two, and a card showing 15.1 alone leaves the
+	/// reader to remember what normal looks like.
+	measure 'Span vs Company Label' =
+			FORMAT ( [Average Span of Control], "0.0", "en-US" )
+			    & " vs " & FORMAT ( [Company Span Baseline], "0.0", "en-US" )
+		displayFolder: 10 Report
+		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000085
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column Value
 		isHidden

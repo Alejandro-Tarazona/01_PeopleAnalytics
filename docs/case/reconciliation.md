@@ -245,8 +245,8 @@ organisation. Four rules fire across them.
 
 The rows that fire are not the interesting part. These are:
 
-- **The three São Paulo rows are silent.** Base compa-ratio there is 0.88 and 62 %
-  of the population sits below band minimum. Total target cash is 0.99, because a
+- **The three São Paulo rows are silent.** Base compa-ratio there is 0.88, the lowest
+  of any segment in the company. Total target cash is 0.99, because a
   41 % variable target meets a 25 % market norm, and attrition is *below* LATAM's
   own rate. An analysis reading base salary alone recommends a raise for a
   population that was never underpaid.
