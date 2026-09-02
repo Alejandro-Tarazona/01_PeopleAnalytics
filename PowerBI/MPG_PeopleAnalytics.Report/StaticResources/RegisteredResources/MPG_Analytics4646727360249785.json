@@ -609,10 +609,20 @@
             "show": true,
             "foreground": {
               "solid": {
-                "color": "#98A2B3"
+                "color": "#475467"
               }
             },
-            "transparency": 100
+            "background": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "border": {
+              "solid": {
+                "color": "#E4E7EC"
+              }
+            },
+            "transparency": 0
           }
         ],
         "labels": [

@@ -14,6 +14,25 @@ HRIS extracts to a costed recommendation for the executive committee.
 
 ---
 
+## The result, first
+
+| | |
+|---|---|
+| [**Executive presentation**](MPG_PeopleAnalytics_Executive.pptx) | 16 slides. The three questions the CEO asked, the four segments found, what each costs, the risks, and the pilot that tests the recommendation before it is rolled out. |
+| [**Power BI report**](MPG_PeopleAnalytics_PBI_Report.pdf) | The four report pages, each followed by its own documentation panel. |
+
+**The short version.** HR proposed a blanket 6 % salary adjustment across the LATAM
+hub: **$5.38M**, of which 95 % would land on people already paid at or above their
+band minimum, leaving 23 people below it. The analysis recommends **$1.15M** on two
+segments instead, against **$5.76M** of attrition exposure, paying back in under five
+months — and it recommends spending the first **$349K** as a controlled pilot rather
+than as a rollout.
+
+Scored against a ground truth written before the data existed: **precision 100 %,
+recall 100 %** on 746 segments.
+
+---
+
 ## The case
 
 **Situation.** Meridian Payments Group (MPG) — a global payments company, 4,500
@@ -238,7 +257,9 @@ HR literature puts the range between 0.5× and 2× of annual salary, rising with
 specialisation and ramp time. These figures are widely cited and rarely audited, so
 the position taken here is not to defend a precise number but to **declare it as an
 assumption and test its sensitivity**: the recommendation is evaluated at 1.0× / 1.5×
-/ 2.0×, and slide 11 shows where it stops holding.
+/ 2.0×, and slide 11 of the presentation reports the result: it does not stop
+holding anywhere in that range. At 1.0× — the bottom of the published range — the
+recommendation still covers 3.3 times its cost and pays back inside eight months.
 
 ---
 
@@ -313,6 +334,22 @@ Step 3 comes after step 2 the first time only — the role has to exist before
 
 ---
 
+## How this was built
+
+Claude Code was used as an AI development partner throughout the project. I defined
+the business requirements, the analytical approach, the architecture, the validation
+criteria and the final recommendations; Claude Code supported implementation across
+SQL, Python, Power Query, DAX, documentation and debugging. Generated output was
+reviewed and validated before being incorporated into the final solution.
+
+The validation suite is what makes that division of labor safe to state. Every
+derived figure is computed twice — once in the semantic model, once independently in
+Python — and reconciled cell by cell, so a generated measure that is subtly wrong
+fails a test rather than reaching a slide. Several did, and are recorded in
+[`docs/case/reconciliation.md`](docs/case/reconciliation.md).
+
+---
+
 ## Documentation
 
 | Document | What it covers |
@@ -322,6 +359,5 @@ Step 3 comes after step 2 the first time only — the role has to exist before
 | [`docs/case/reconciliation.md`](docs/case/reconciliation.md) | How the model's output is checked and scored, and what that does not prove |
 | [`docs/case/rls.md`](docs/case/rls.md) | Row-level security, the minimum group size rule, and the limits of both |
 | [`docs/case/report.md`](docs/case/report.md) | What each report page is for, and what is deliberately left off it |
-| [`docs/MPG_PeopleAnalytics_PBI_Report.pdf`](docs/MPG_PeopleAnalytics_PBI_Report.pdf) | The four report pages, each followed by its documentation panel |
 | [`docs/pbi-model.md`](docs/pbi-model.md) | The semantic model: tables, relationships, and the reasoning behind each design decision |
 | [`CLAUDE.md`](CLAUDE.md) | Conventions this repository is held to |

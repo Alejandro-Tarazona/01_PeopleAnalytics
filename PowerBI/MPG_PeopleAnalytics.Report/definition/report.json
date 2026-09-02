@@ -11,7 +11,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "MPG_Analytics18305212560666173.json",
+      "name": "MPG_Analytics4646727360249785.json",
       "reportVersionAtImport": {
         "visual": "2.12.0",
         "report": "3.4.0",
@@ -65,8 +65,8 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "MPG_Analytics18305212560666173.json",
-          "path": "MPG_Analytics18305212560666173.json",
+          "name": "MPG_Analytics4646727360249785.json",
+          "path": "MPG_Analytics4646727360249785.json",
           "type": "CustomTheme"
         },
         {
