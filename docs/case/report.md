@@ -1,7 +1,7 @@
 # The Report
 
 Four pages, in the order a decision gets made: what is the shape of the
-organisation and what is being proposed, is there a problem and what does it cost,
+organization and what is being proposed, is there a problem and what does it cost,
 which segments and why those, what to do about each one.
 
 This document states what each page is **for**. It does not describe how to build
@@ -19,7 +19,7 @@ not belong on the page.
 **Reads it:** anyone opening the report for the first time, and the same executive
 coming back to check a number they half-remember.
 
-**Answers:** what the organisation looks like right now, how it got here, and what
+**Answers:** what the organization looks like right now, how it got here, and what
 the proposal on the table would cost. It is the only page with a time axis. The
 other three are all point-in-time by construction, because a rule that fires on a
 segment fires on the segment as it stands today.
@@ -81,7 +81,7 @@ who may arrive already believing they know which team is the problem.
 **Answers:** which of the 746 cells clear the materiality floor, and which of
 those eleven carry a signal that is unlikely to be noise. This is the page that
 makes the rule visible rather than asserted: the significance test is shown, not
-summarised, so that a reader can see a cell running well above the baseline and
+summarized, so that a reader can see a cell running well above the baseline and
 watch it fail to fire.
 
 **Must survive the page alone:** that two cells at 1.7x the company baseline —
@@ -105,7 +105,7 @@ outcome.
 **Answers:** for each segment that fired, what the intervention is, what it
 costs, and how long it takes to pay for itself. Three rules mean three different
 answers, and the page has to keep them distinct — a pay adjustment, an equity
-correction and an organisational change are not interchangeable, and presenting
+correction and an organizational change are not interchangeable, and presenting
 them as one list of "problem teams" loses the only distinction that matters.
 
 **Must survive the page alone:** that São Paulo is **not** on the action list,
@@ -170,7 +170,7 @@ a measure, and harder to notice.
 > report is built to avoid.
 >
 > **The figures.** Headcount is people on the books at the last month-end in view;
-> monthly snapshots are never summed. Annualised Payroll USD is base pay only, in
+> monthly snapshots are never summed. Annualized Payroll USD is base pay only, in
 > constant currency, so an exchange movement is never read as a pay decision.
 > Voluntary Attrition % LTM counts voluntary exits over the trailing twelve months
 > over average headcount across the same window, involuntary exits excluded. Weighted
@@ -247,7 +247,7 @@ a measure, and harder to notice.
 > variable — the single most consequential choice in the rule, because base pay alone
 > puts São Paulo Sales at 0.88 and recommends a raise for a population that was never
 > underpaid. Average Span of Control is reports per manager, and separates a pay
-> problem from an organisational one. The materiality floor is thirty people: a rule
+> problem from an organizational one. The materiality floor is thirty people: a rule
 > that cannot act below thirty has no business reporting below thirty.
 
 ### 4 · What to do

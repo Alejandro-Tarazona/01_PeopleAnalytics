@@ -25,7 +25,7 @@ recommendation.
 
 ---
 
-## The organisation
+## The organization
 
 **Meridian Payments Group (MPG)** — a global payments company, ~4,500 employees across
 nine cities and four regions, operating a hub model.
@@ -94,7 +94,7 @@ Mean compa-ratio by region: APAC 1.01 · NAM 1.00 · EMEA 0.99 · LAC 0.94.
 
 Sustained pay drift. Mean compa-ratio of 0.85, with **86 % of the segment below band
 minimum**, and attrition at 2.6× the baseline. This is the segment a correct analysis
-must find and prioritise, and the one where a targeted adjustment pays for itself.
+must find and prioritize, and the one where a targeted adjustment pays for itself.
 
 ### B — invisible in the average
 
@@ -117,7 +117,7 @@ take no action here, and to say why.
 ### D — the second decoy
 
 Attrition at 2.4× the baseline, which looks like the same problem as segment A. But
-the compa-ratio is 1.01, comfortably inside band. The cause is organisational: span of
+the compa-ratio is 1.01, comfortably inside band. The cause is organizational: span of
 control of 15.1 against 6.7 across the rest of the company, and only 4 % of the segment
 sits below band minimum. The correct recommendation
 is a supervisory layer, not a pay adjustment — spending money here would not move the
@@ -126,7 +126,7 @@ number.
 ### Background noise
 
 Roughly 3 % of employees carry a random compa-ratio deviation with no segment pattern.
-This must not surface as a prioritised segment. It is the control for over-fitting.
+This must not surface as a prioritized segment. It is the control for over-fitting.
 
 ---
 

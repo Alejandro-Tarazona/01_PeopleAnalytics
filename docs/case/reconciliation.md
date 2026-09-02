@@ -90,7 +90,7 @@ Each of the ten inputs the rule reads, cell by cell, plus the three verdicts.
 | `Average Headcount LTM`, `Voluntary Exits LTM` | The rate's two halves. A denominator on a different basis from the numerator is the classic way to manufacture a signal. |
 | `Expected Exits LTM`, `Attrition p-value` | The significance test. Also checked for being *discriminating*: a measure returning blank everywhere would reconcile perfectly against nothing. |
 | `Weighted Average TTC Compa-Ratio` | The single most consequential figure in the rule. |
-| `Average Span of Control` | What separates a pay problem from an organisational one. |
+| `Average Span of Control` | What separates a pay problem from an organizational one. |
 | The four cohort figures | Rule 2 lives entirely in these; the cell average is blind to it by construction. |
 | The three flags | Inputs can agree to four decimals and verdicts still differ when a value sits on a threshold. Worth knowing about explicitly. |
 
@@ -225,7 +225,7 @@ is declared or detected, never assumed.
 ## The result
 
 Eleven cells clear the thirty-person materiality floor, out of 746 in the
-organisation. Four rules fire across them.
+organization. Four rules fire across them.
 
 | City | Job | Level | HC LTM | Exits | Expected | *p* | TTC | Span | Rule fired |
 |---|---|---|---:|---:|---:|---:|---:|---:|---|
@@ -236,7 +236,7 @@ organisation. Four rules fire across them.
 | Bogotá | OPS | IC3 | 35.1 | 8 | 4.7 | 0.107 | 0.95 | 6.3 | — |
 | Dublin | ENG | IC5 | 90.0 | 9 | 12.1 | 0.854 | 0.99 | 7.6 | **Internal equity** |
 | Miami | ENG | IC3 | 32.6 | 5 | 4.4 | 0.448 | 0.98 | 6.9 | — |
-| Singapore | RSK | IC2 | 100.2 | 28 | 13.5 | 0.000373 | 1.01 | 15.1 | **Organisational** |
+| Singapore | RSK | IC2 | 100.2 | 28 | 13.5 | 0.000373 | 1.01 | 15.1 | **Organizational** |
 | São Paulo | SAL | IC3 | 35.1 | 8 | 4.7 | 0.107 | 1.00 | 3.6 | — |
 | São Paulo | SAL | IC4 | 48.8 | 7 | 6.6 | 0.487 | 0.99 | 3.7 | — |
 | São Paulo | SAL | M1 | 36.6 | 4 | 4.9 | 0.726 | 0.98 | 8.0 | — |
@@ -268,13 +268,13 @@ The rows that fire are not the interesting part. These are:
 Scoring runs off `expected_rule` rather than the business verdict. Segment D
 carries the verdict *dismiss* because no pay adjustment is warranted there, yet a
 rule should still fire on it. Dismissing a segment for pay and detecting it as an
-organisational problem are the same correct answer said two ways.
+organizational problem are the same correct answer said two ways.
 
 ---
 
 ## What would break this
 
-- **The thresholds are calibrated on one organisation.** A company with different
+- **The thresholds are calibrated on one organization.** A company with different
   baseline attrition or a flatter pay structure needs them re-derived, not copied.
 - **A perfect score on data built to be found is not a perfect score on real
   data.** What this demonstrates is that the logic separates a real signal from

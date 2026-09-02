@@ -25,9 +25,9 @@ table _Measures
 		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000001
 
-	/// Annualised base payroll in constant currency. Constant, not actual, so a currency
+	/// Annualized base payroll in constant currency. Constant, not actual, so a currency
 	/// movement is never mistaken for a compensation decision.
-	measure 'Annualised Payroll USD' =
+	measure 'Annualized Payroll USD' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
 			RETURN
 			    CALCULATE ( SUM ( Facts_HeadCount[base_salary_usd_constant] ), Dim_Date[date_key] = LastSnapshot )
@@ -40,7 +40,7 @@ table _Measures
 	measure 'Average Base Salary USD' =
 			VAR Population = [Headcount]
 			RETURN
-			    IF ( Population >= 5 || [_Has Compensation Access], DIVIDE ( [Annualised Payroll USD], Population ) )
+			    IF ( Population >= 5 || [_Has Compensation Access], DIVIDE ( [Annualized Payroll USD], Population ) )
 		formatString: $#,##0
 		displayFolder: 01 Base
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000003
@@ -72,7 +72,7 @@ table _Measures
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000005
 
 	/// Total target cash - base plus variable - against the market equivalent. This is the
-	/// measure the prioritisation rule reads. Base pay in isolation flags populations whose
+	/// measure the prioritization rule reads. Base pay in isolation flags populations whose
 	/// variable component already puts them at market.
 	measure 'Weighted Average TTC Compa-Ratio' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
@@ -232,17 +232,17 @@ table _Measures
 			RETURN
 			    CALCULATE ( AVERAGE ( Facts_HeadCount[span_of_manager] ), Dim_Date[date_key] = LastSnapshot )
 		formatString: 0.0
-		displayFolder: 04 Organisation
+		displayFolder: 04 Organization
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000019
 
 	/// The company-wide span, ignoring the current selection. A segment is only
-	/// organisationally unusual relative to the rest of the company.
+	/// organizationally unusual relative to the rest of the company.
 	measure 'Company Span Baseline' = CALCULATE ( [Average Span of Control], REMOVEFILTERS () )
 		formatString: 0.0
-		displayFolder: 04 Organisation
+		displayFolder: 04 Organization
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000020
 
-	/// Annualised cost of lifting everyone below the band minimum up to it. The numerator
+	/// Annualized cost of lifting everyone below the band minimum up to it. The numerator
 	/// of any pay-adjustment business case.
 	measure 'Cost to Band Minimum' =
 			VAR LastSnapshot = CALCULATE ( MAX ( Dim_Date[date_key] ), Facts_HeadCount )
@@ -310,7 +310,7 @@ table _Measures
 
 	/// The part of the payroll movement nobody in the company controls. Splitting it out is
 	/// what stops a currency movement being read as a pay decision.
-	measure 'Currency Effect USD' = [Payroll USD Actual] - [Annualised Payroll USD]
+	measure 'Currency Effect USD' = [Payroll USD Actual] - [Annualized Payroll USD]
 		formatString: $#,##0
 		displayFolder: 06 Currency
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000026
@@ -462,7 +462,7 @@ table _Measures
 
 	/// Rule 1. Fires where the segment is materially sized, its attrition is distinguishable
 	/// from the baseline, total target cash sits below 0.92, and span of control rules out an
-	/// organisational explanation.
+	/// organizational explanation.
 	/// Total cash, not base salary. This is the single most consequential line in the model:
 	/// base pay alone flags São Paulo Sales at 0.88, a population whose 41% variable target
 	/// puts its total cash at 0.99 and whose attrition sits below its own region's.
@@ -504,7 +504,7 @@ table _Measures
 	/// company mean. The recommendation this produces is a supervisory layer, not money.
 	/// Without this rule the analysis has only one lever, and every problem starts to look
 	/// like a pay problem.
-	measure 'Flag Organisational' =
+	measure 'Flag Organizational' =
 			VAR Significant =
 			    [Average Headcount LTM] >= 30
 			        && NOT ISBLANK ( [Attrition p-value] )
@@ -528,7 +528,7 @@ table _Measures
 			        {
 			            ( "Pay adjustment", [Flag Pay Adjustment] ),
 			            ( "Internal equity", [Flag Internal Equity] ),
-			            ( "Organisational", [Flag Organisational] )
+			            ( "Organizational", [Flag Organizational] )
 			        },
 			        [Value2] = 1
 			    )
@@ -590,15 +590,15 @@ table _Measures
 		displayFolder: 08 Trend
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000043
 
-	/// Annualised base payroll one period back, in constant currency like its present-day
+	/// Annualized base payroll one period back, in constant currency like its present-day
 	/// counterpart. Constant currency matters more here than anywhere else on the page: a
 	/// period-over-period comparison at actual rates reports an exchange movement as a pay
 	/// decision, which is the single most common way a payroll trend chart misleads.
-	measure 'Annualised Payroll USD Previous Period' =
+	measure 'Annualized Payroll USD Previous Period' =
 			IF (
 			    HASONEVALUE ( Dim_Date[year_month] ),
-			    CALCULATE ( [Annualised Payroll USD], PREVIOUSMONTH ( Dim_Date[date] ) ),
-			    CALCULATE ( [Annualised Payroll USD], PREVIOUSYEAR ( Dim_Date[date] ) )
+			    CALCULATE ( [Annualized Payroll USD], PREVIOUSMONTH ( Dim_Date[date] ) ),
+			    CALCULATE ( [Annualized Payroll USD], PREVIOUSYEAR ( Dim_Date[date] ) )
 			)
 		formatString: $#,##0
 		displayFolder: 08 Trend
@@ -606,10 +606,10 @@ table _Measures
 
 	/// Payroll movement in dollars. Blank with no comparison period, for the same reason as
 	/// the headcount equivalent.
-	measure 'Annualised Payroll USD Change vs Previous Period' =
-			VAR Baseline = [Annualised Payroll USD Previous Period]
+	measure 'Annualized Payroll USD Change vs Previous Period' =
+			VAR Baseline = [Annualized Payroll USD Previous Period]
 			RETURN
-			    IF ( NOT ISBLANK ( Baseline ), [Annualised Payroll USD] - Baseline )
+			    IF ( NOT ISBLANK ( Baseline ), [Annualized Payroll USD] - Baseline )
 		formatString: +$#,##0;-$#,##0;$0
 		displayFolder: 08 Trend
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000045
@@ -617,9 +617,9 @@ table _Measures
 	/// Payroll movement as a rate. Read beside the headcount rate rather than alone: payroll
 	/// rising faster than headcount is a mix or merit story, and the two rates together say
 	/// which one without needing a third measure.
-	measure 'Annualised Payroll USD Change % vs Previous Period' =
-			DIVIDE ( [Annualised Payroll USD Change vs Previous Period],
-			         [Annualised Payroll USD Previous Period] )
+	measure 'Annualized Payroll USD Change % vs Previous Period' =
+			DIVIDE ( [Annualized Payroll USD Change vs Previous Period],
+			         [Annualized Payroll USD Previous Period] )
 		formatString: +0.0%;-0.0%;0.0%
 		displayFolder: 08 Trend
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000046
@@ -634,16 +634,16 @@ table _Measures
 		displayFolder: 09 Simulation
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000047
 
-	/// Annualised cost of raising every base salary in the current filter context by the
+	/// Annualized cost of raising every base salary in the current filter context by the
 	/// selected rate. The gross number the proposal is asking for.
-	measure 'Blanket Increase Cost USD' = [Annualised Payroll USD] * [Payroll Increase % Value]
+	measure 'Blanket Increase Cost USD' = [Annualized Payroll USD] * [Payroll Increase % Value]
 		formatString: $#,##0
 		displayFolder: 09 Simulation
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000048
 
-	/// Annualised base payroll once the increase is applied. Shown next to the current figure
+	/// Annualized base payroll once the increase is applied. Shown next to the current figure
 	/// so the increase is read as a share of the whole rather than as a headline in isolation.
-	measure 'Payroll USD After Blanket Increase' = [Annualised Payroll USD] * ( 1 + [Payroll Increase % Value] )
+	measure 'Payroll USD After Blanket Increase' = [Annualized Payroll USD] * ( 1 + [Payroll Increase % Value] )
 		formatString: $#,##0
 		displayFolder: 09 Simulation
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000049
@@ -819,8 +819,8 @@ table _Measures
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000059
 
 	/// Payroll movement as one line of text for the card's reference label.
-	measure 'Annualised Payroll USD Comparison Label' =
-			VAR Movement = [Annualised Payroll USD Change % vs Previous Period]
+	measure 'Annualized Payroll USD Comparison Label' =
+			VAR Movement = [Annualized Payroll USD Change % vs Previous Period]
 			VAR Shown = ROUND ( Movement, 3 )
 			RETURN
 			    SWITCH (
@@ -833,9 +833,9 @@ table _Measures
 		displayFolder: 08 Trend
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000061
 
-	/// Attrition movement as one line of text, in percentage points and labelled as such.
+	/// Attrition movement as one line of text, in percentage points and labeled as such.
 	/// The only card of the four whose direction means something on its own, which is why it
-	/// is also the only one that should ever take colour - conditional formatting on
+	/// is also the only one that should ever take color - conditional formatting on
 	/// [Voluntary Attrition % LTM Change vs Previous Period] greater than zero.
 	measure 'Voluntary Attrition % LTM Comparison Label' =
 			VAR Movement = [Voluntary Attrition % LTM Change vs Previous Period]
@@ -869,11 +869,11 @@ table _Measures
 		displayFolder: 08 Trend
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000063
 
-	/// The font colour for the attrition card's comparison label, as a hex string, bound
+	/// The font color for the attrition card's comparison label, as a hex string, bound
 	/// through Format by field value.
 	/// Attrition is the only one of the four headline figures whose direction means something
 	/// on its own - headcount or payroll rising is neither good nor bad without context - so
-	/// it is the only card that ever takes colour. Rising is #B04A42; everything else stays
+	/// it is the only card that ever takes color. Rising is #B04A42; everything else stays
 	/// the neutral #667085.
 	measure 'Conditional Format Voluntary Attrition' = IF ( [Voluntary Attrition % LTM Change vs Previous Period] > 0, "#B04A42", "#667085" )
 		displayFolder: 10 Report
@@ -947,7 +947,7 @@ table _Measures
 			            Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]
 			        ),
 			        "@Rules",
-			            [Flag Pay Adjustment] + [Flag Internal Equity] + [Flag Organisational]
+			            [Flag Pay Adjustment] + [Flag Internal Equity] + [Flag Organizational]
 			    )
 			RETURN
 			    COUNTROWS ( FILTER ( Cells_rules, [@Rules] > 0 ) )
@@ -1009,12 +1009,12 @@ table _Measures
 		displayFolder: 10 Report
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000073
 
-	/// Point colour for the scan scatter, as a hex string, bound through Data colors ->
+	/// Point color for the scan scatter, as a hex string, bound through Data colors ->
 	/// Format by field value.
 	/// The scatter's Legend well takes a column and [Detection Rule Fired] is a measure, so
-	/// there is no way to colour the points by which rule fired through the field wells at
+	/// there is no way to color the points by which rule fired through the field wells at
 	/// all. Conditional formatting is the only route, and it costs the automatic legend -
-	/// the page needs four coloured squares and four words placed by hand.
+	/// the page needs four colored squares and four words placed by hand.
 	/// Ordered deliberately: a cell can trip more than one rule, and where that happens the
 	/// pay verdict is the one shown, because it is the one that costs money.
 	measure 'Conditional Format Detection Rule' =
@@ -1022,7 +1022,7 @@ table _Measures
 			    TRUE (),
 			    [Flag Pay Adjustment] = 1, "#001552",
 			    [Flag Internal Equity] = 1, "#3E72C4",
-			    [Flag Organisational] = 1, "#6B97D8",
+			    [Flag Organizational] = 1, "#6B97D8",
 			    "#C9DAF3"
 			)
 		displayFolder: 10 Report
@@ -1036,7 +1036,7 @@ table _Measures
 		displayFolder: 09 Simulation
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000075
 
-	/// Annualised cost of lifting everyone paid below the selected compa-ratio up to it.
+	/// Annualized cost of lifting everyone paid below the selected compa-ratio up to it.
 	/// The number a targeted adjustment actually costs, and the counterpart to
 	/// [Blanket Increase Cost USD] on the overview.
 	///
@@ -1089,9 +1089,9 @@ table _Measures
 		displayFolder: 05 Economics
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000077
 
-	/// Annualised cost of the adjustments this analysis recommends: every cell where the pay
+	/// Annualized cost of the adjustments this analysis recommends: every cell where the pay
 	/// or the equity rule fired, lifted to the selected compa-ratio target.
-	/// Excludes organisational findings on purpose - their lever is a supervisory layer, not
+	/// Excludes organizational findings on purpose - their lever is a supervisory layer, not
 	/// money, and folding them into a spend figure would misstate both.
 	/// Evaluates all three rules once per cell, so it is one of the slower measures in the
 	/// model. Fine on a card; do not put it on an axis.
@@ -1139,13 +1139,13 @@ table _Measures
 	/// phrase rather than as a measure name - renaming it would change what the reader sees
 	/// on the card, so it stays.
 	///
-	/// It keys off the organisational flag rather than off a blank. The first version tested
+	/// It keys off the organizational flag rather than off a blank. The first version tested
 	/// ISBLANK([% Above Band Maximum]), which worked only because COUNTROWS over an empty
 	/// filter returns blank and nobody in Singapore Risk & Compliance sits above their band
 	/// maximum. One person crossing that line would have turned the words "Not the lever"
 	/// into a percentage, on a card whose whole argument is that this segment is not a pay
 	/// problem.
-	measure 'Cost of a pay rise' = IF ( [Flag Organisational] = 1, "Not the lever", [Cost to Target Label] )
+	measure 'Cost of a pay rise' = IF ( [Flag Organizational] = 1, "Not the lever", [Cost to Target Label] )
 		displayFolder: 10 Report
 		lineageTag: 7a1c9e40-3b52-4a18-9f21-000000000086
 

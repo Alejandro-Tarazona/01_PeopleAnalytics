@@ -1,6 +1,6 @@
 # The Detection Rule
 
-How a segment gets prioritised, why each threshold is what it is, and how the
+How a segment gets prioritized, why each threshold is what it is, and how the
 logic is scored.
 
 This is the **specification**, and it is implemented twice on purpose: as DAX
@@ -22,7 +22,7 @@ asserted. How that works, and what it does not prove:
 cannot be repeated by a colleague, and it cannot be wrong in a way anyone can
 demonstrate. Writing the decision down as an explicit rule makes it all three.
 
-The rule scans **every city × job × level cell in the organisation** — 746 of
+The rule scans **every city × job × level cell in the organization** — 746 of
 them, of which 11 clear the materiality floor. It does not know the four designed segments exist. That is what makes the
 score meaningful: the logic is not being tested on the answers it was built from.
 
@@ -43,7 +43,7 @@ The segment is genuinely below market and losing people because of it.
 | Materiality | ≥ 30 people | An intervention below thirty people is a case, not a policy |
 | Significance | Poisson *p* < 0.05 | The attrition gap must be distinguishable from the baseline |
 | Pay position | Total target cash compa-ratio < 0.92 | Total cash, not base salary — see below |
-| Cause | Span of control ≤ 1.5× company mean | Otherwise the problem is organisational, not financial |
+| Cause | Span of control ≤ 1.5× company mean | Otherwise the problem is organizational, not financial |
 
 ### Rule 2 · Internal equity
 
@@ -59,7 +59,7 @@ split by tenure.
 No significance test here: this is a comparison of positions within a fixed
 population, not a rate estimated from counts, so Poisson noise does not apply.
 
-### Rule 3 · Organisational
+### Rule 3 · Organizational
 
 Attrition is real and significant, but pay is not the explanation.
 
@@ -129,7 +129,7 @@ The project uses three minimum-size thresholds and they are not interchangeable:
 | Threshold | Question it answers | Where it applies |
 |---|---|---|
 | **5 people** | May this figure be displayed at all? | Confidentiality. Suppresses peer percentiles and, in the report, individual pay. A group of two is identifiable. |
-| **30 people** | Is this worth a policy intervention? | Materiality. Below it, the answer is a conversation with a manager, not a compensation programme. |
+| **30 people** | Is this worth a policy intervention? | Materiality. Below it, the answer is a conversation with a manager, not a compensation program. |
 | ***p* < 0.05** | Is this difference real? | Statistical. Guards against acting on noise. |
 
 Being able to say which of the three applies, and why, is more useful than any
@@ -146,7 +146,7 @@ Precision and recall are computed at the cell grain the rules operate on.
   and fire the rule that segment expects?
 
 Segment D carries the business verdict *dismiss* because no pay adjustment is
-warranted, yet a rule should still fire on it — the organisational one.
+warranted, yet a rule should still fire on it — the organizational one.
 Dismissing for pay and detecting as an org problem are the same correct answer
 expressed two ways, so scoring runs off `expected_rule`, not the verdict.
 
@@ -171,7 +171,7 @@ asserted: [`reconciliation.md`](./reconciliation.md).
 
 Honest limitations, in the order they would matter:
 
-- **The thresholds are calibrated on one organisation.** A company with a
+- **The thresholds are calibrated on one organization.** A company with a
   different baseline attrition or a flatter pay structure would need them
   re-derived, not copied.
 - **The Poisson test assumes exits are independent.** Team-level departures —

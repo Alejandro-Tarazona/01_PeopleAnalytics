@@ -234,36 +234,36 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         TREND,
     ),
     (
-        "Annualised Payroll USD Previous Period",
-        "Annualised base payroll one period back, in constant currency like its present-day\n"
+        "Annualized Payroll USD Previous Period",
+        "Annualized base payroll one period back, in constant currency like its present-day\n"
         "counterpart. Constant currency matters more here than anywhere else on the page: a\n"
         "period-over-period comparison at actual rates reports an exchange movement as a pay\n"
         "decision, which is the single most common way a payroll trend chart misleads.",
         "IF (\n"
         "    HASONEVALUE ( Dim_Date[year_month] ),\n"
-        "    CALCULATE ( [Annualised Payroll USD], PREVIOUSMONTH ( Dim_Date[date] ) ),\n"
-        "    CALCULATE ( [Annualised Payroll USD], PREVIOUSYEAR ( Dim_Date[date] ) )\n"
+        "    CALCULATE ( [Annualized Payroll USD], PREVIOUSMONTH ( Dim_Date[date] ) ),\n"
+        "    CALCULATE ( [Annualized Payroll USD], PREVIOUSYEAR ( Dim_Date[date] ) )\n"
         ")",
         "$#,##0",
         TREND,
     ),
     (
-        "Annualised Payroll USD Change vs Previous Period",
+        "Annualized Payroll USD Change vs Previous Period",
         "Payroll movement in dollars. Blank with no comparison period, for the same reason as\n"
         "the headcount equivalent.",
-        "VAR Baseline = [Annualised Payroll USD Previous Period]\n"
+        "VAR Baseline = [Annualized Payroll USD Previous Period]\n"
         "RETURN\n"
-        "    IF ( NOT ISBLANK ( Baseline ), [Annualised Payroll USD] - Baseline )",
+        "    IF ( NOT ISBLANK ( Baseline ), [Annualized Payroll USD] - Baseline )",
         "+$#,##0;-$#,##0;$0",
         TREND,
     ),
     (
-        "Annualised Payroll USD Change % vs Previous Period",
+        "Annualized Payroll USD Change % vs Previous Period",
         "Payroll movement as a rate. Read beside the headcount rate rather than alone: payroll\n"
         "rising faster than headcount is a mix or merit story, and the two rates together say\n"
         "which one without needing a third measure.",
-        "DIVIDE ( [Annualised Payroll USD Change vs Previous Period],\n"
-        "         [Annualised Payroll USD Previous Period] )",
+        "DIVIDE ( [Annualized Payroll USD Change vs Previous Period],\n"
+        "         [Annualized Payroll USD Previous Period] )",
         "+0.0%;-0.0%;0.0%",
         TREND,
     ),
@@ -282,17 +282,17 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
     ),
     (
         "Blanket Increase Cost USD",
-        "Annualised cost of raising every base salary in the current filter context by the\n"
+        "Annualized cost of raising every base salary in the current filter context by the\n"
         "selected rate. The gross number the proposal is asking for.",
-        "[Annualised Payroll USD] * [Payroll Increase % Value]",
+        "[Annualized Payroll USD] * [Payroll Increase % Value]",
         "$#,##0",
         SIMULATION,
     ),
     (
         "Payroll USD After Blanket Increase",
-        "Annualised base payroll once the increase is applied. Shown next to the current figure\n"
+        "Annualized base payroll once the increase is applied. Shown next to the current figure\n"
         "so the increase is read as a share of the whole rather than as a headline in isolation.",
-        "[Annualised Payroll USD] * ( 1 + [Payroll Increase % Value] )",
+        "[Annualized Payroll USD] * ( 1 + [Payroll Increase % Value] )",
         "$#,##0",
         SIMULATION,
     ),
@@ -484,9 +484,9 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         TREND,
     ),
     (
-        "Annualised Payroll USD Comparison Label",
+        "Annualized Payroll USD Comparison Label",
         "Payroll movement as one line of text for the card's reference label.",
-        "VAR Movement = [Annualised Payroll USD Change % vs Previous Period]\n"
+        "VAR Movement = [Annualized Payroll USD Change % vs Previous Period]\n"
         "VAR Shown = ROUND ( Movement, 3 )\n"
         "RETURN\n"
         "    SWITCH (\n"
@@ -501,9 +501,9 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
     ),
     (
         "Voluntary Attrition % LTM Comparison Label",
-        "Attrition movement as one line of text, in percentage points and labelled as such.\n"
+        "Attrition movement as one line of text, in percentage points and labeled as such.\n"
         "The only card of the four whose direction means something on its own, which is why it\n"
-        "is also the only one that should ever take colour - conditional formatting on\n"
+        "is also the only one that should ever take color - conditional formatting on\n"
         "[Voluntary Attrition % LTM Change vs Previous Period] greater than zero.",
         "VAR Movement = [Voluntary Attrition % LTM Change vs Previous Period]\n"
         "VAR Shown = ROUND ( Movement, 3 )\n"
@@ -609,7 +609,7 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         "            Dim_Location[city], Dim_Job[job_code], Dim_Job[job_level]\n"
         "        ),\n"
         "        \"@Rules\",\n"
-        "            [Flag Pay Adjustment] + [Flag Internal Equity] + [Flag Organisational]\n"
+        "            [Flag Pay Adjustment] + [Flag Internal Equity] + [Flag Organizational]\n"
         "    )\n"
         "RETURN\n"
         "    COUNTROWS ( FILTER ( Cells_rules, [@Rules] > 0 ) )",
@@ -636,11 +636,11 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
     ),
     (
         "Conditional Format Voluntary Attrition",
-        "The font colour for the attrition card's comparison label, as a hex string, bound\n"
+        "The font color for the attrition card's comparison label, as a hex string, bound\n"
         "through Format by field value.\n"
         "Attrition is the only one of the four headline figures whose direction means something\n"
         "on its own - headcount or payroll rising is neither good nor bad without context - so\n"
-        "it is the only card that ever takes colour. Rising is #B04A42; everything else stays\n"
+        "it is the only card that ever takes color. Rising is #B04A42; everything else stays\n"
         "the neutral #667085.",
         "IF ( [Voluntary Attrition % LTM Change vs Previous Period] > 0, \"#B04A42\", \"#667085\" )",
         "",
@@ -675,7 +675,7 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         "",
         REPORT,
     ),
-    # --- What the scan page counts and colours --------------------------------
+    # --- What the scan page counts and colors --------------------------------
     (
         "Cells Above Materiality Floor",
         "How many cells clear the thirty-person floor and are therefore worth a verdict.\n"
@@ -708,19 +708,19 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
     ),
     (
         "Conditional Format Detection Rule",
-        "Point colour for the scan scatter, as a hex string, bound through Data colors ->\n"
+        "Point color for the scan scatter, as a hex string, bound through Data colors ->\n"
         "Format by field value.\n"
         "The scatter's Legend well takes a column and [Detection Rule Fired] is a measure, so\n"
-        "there is no way to colour the points by which rule fired through the field wells at\n"
+        "there is no way to color the points by which rule fired through the field wells at\n"
         "all. Conditional formatting is the only route, and it costs the automatic legend -\n"
-        "the page needs four coloured squares and four words placed by hand.\n"
+        "the page needs four colored squares and four words placed by hand.\n"
         "Ordered deliberately: a cell can trip more than one rule, and where that happens the\n"
         "pay verdict is the one shown, because it is the one that costs money.",
         "SWITCH (\n"
         "    TRUE (),\n"
         "    [Flag Pay Adjustment] = 1, \"#001552\",\n"
         "    [Flag Internal Equity] = 1, \"#3E72C4\",\n"
-        "    [Flag Organisational] = 1, \"#6B97D8\",\n"
+        "    [Flag Organizational] = 1, \"#6B97D8\",\n"
         "    \"#C9DAF3\"\n"
         ")",
         "",
@@ -739,7 +739,7 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
     ),
     (
         "Cost to Target Compa-Ratio",
-        "Annualised cost of lifting everyone paid below the selected compa-ratio up to it.\n"
+        "Annualized cost of lifting everyone paid below the selected compa-ratio up to it.\n"
         "The number a targeted adjustment actually costs, and the counterpart to\n"
         "[Blanket Increase Cost USD] on the overview.\n"
         "\n"
@@ -800,14 +800,14 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
     # answer anyway: the cards then describe whatever the rule finds, and cannot drift
     # away from the argument the page is making if the data moves.
     #
-    # Organisational segments are deliberately outside both. Singapore trips a rule and
+    # Organizational segments are deliberately outside both. Singapore trips a rule and
     # carries $2.18M of exposure, and none of it is answered with a salary budget. A
     # total that swept it in would be adding up three different currencies of action.
     (
         "Recommended Spend USD",
-        "Annualised cost of the adjustments this analysis recommends: every cell where the pay\n"
+        "Annualized cost of the adjustments this analysis recommends: every cell where the pay\n"
         "or the equity rule fired, lifted to the selected compa-ratio target.\n"
-        "Excludes organisational findings on purpose - their lever is a supervisory layer, not\n"
+        "Excludes organizational findings on purpose - their lever is a supervisory layer, not\n"
         "money, and folding them into a spend figure would misstate both.\n"
         "Evaluates all three rules once per cell, so it is one of the slower measures in the\n"
         "model. Fine on a card; do not put it on an axis.",
@@ -935,13 +935,13 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         "phrase rather than as a measure name - renaming it would change what the reader sees\n"
         "on the card, so it stays.\n"
         "\n"
-        "It keys off the organisational flag rather than off a blank. The first version tested\n"
+        "It keys off the organizational flag rather than off a blank. The first version tested\n"
         "ISBLANK([% Above Band Maximum]), which worked only because COUNTROWS over an empty\n"
         "filter returns blank and nobody in Singapore Risk & Compliance sits above their band\n"
         "maximum. One person crossing that line would have turned the words \"Not the lever\"\n"
         "into a percentage, on a card whose whole argument is that this segment is not a pay\n"
         "problem.",
-        "IF ( [Flag Organisational] = 1, \"Not the lever\", [Cost to Target Label] )",
+        "IF ( [Flag Organizational] = 1, \"Not the lever\", [Cost to Target Label] )",
         "",
         REPORT,
     ),

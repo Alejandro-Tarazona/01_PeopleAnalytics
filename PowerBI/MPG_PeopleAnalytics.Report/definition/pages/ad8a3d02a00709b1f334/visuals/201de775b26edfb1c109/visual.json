@@ -438,7 +438,7 @@
             "titleText": {
               "expr": {
                 "Literal": {
-                  "Value": "'Two segments · annualised'"
+                  "Value": "'Two segments · annualized'"
                 }
               }
             }

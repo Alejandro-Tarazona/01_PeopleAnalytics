@@ -219,7 +219,7 @@ MEASURES: list[tuple[str, str, str, str]] = [
         "Flag Pay Adjustment",
         "Rule 1. Fires where the segment is materially sized, its attrition is distinguishable\n"
         "from the baseline, total target cash sits below 0.92, and span of control rules out an\n"
-        "organisational explanation.\n"
+        "organizational explanation.\n"
         "Total cash, not base salary. This is the single most consequential line in the model:\n"
         "base pay alone flags São Paulo Sales at 0.88, a population whose 41% variable target\n"
         "puts its total cash at 0.99 and whose attrition sits below its own region's.\n"
@@ -253,7 +253,7 @@ MEASURES: list[tuple[str, str, str, str]] = [
         "0",
     ),
     (
-        "Flag Organisational",
+        "Flag Organizational",
         "Rule 3. Fires where attrition is real and significant, pay is demonstrably not the\n"
         "explanation — total target cash at or above 0.95 — and span of control exceeds 1.5x the\n"
         "company mean. The recommendation this produces is a supervisory layer, not money.\n"
@@ -281,7 +281,7 @@ MEASURES: list[tuple[str, str, str, str]] = [
         "        {\n"
         "            ( \"Pay adjustment\", [Flag Pay Adjustment] ),\n"
         "            ( \"Internal equity\", [Flag Internal Equity] ),\n"
-        "            ( \"Organisational\", [Flag Organisational] )\n"
+        "            ( \"Organizational\", [Flag Organizational] )\n"
         "        },\n"
         "        [Value2] = 1\n"
         "    )\n"

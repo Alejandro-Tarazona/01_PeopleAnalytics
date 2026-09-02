@@ -1,4 +1,4 @@
-﻿city,job_code,job_level,Headcount,Average Headcount LTM,Voluntary Exits LTM,Expected Exits LTM,Attrition vs Baseline,Attrition p-value,Weighted Average TTC Compa-Ratio,Average Span of Control,Incumbent Headcount,Incumbent Peer Percentile,Recent Hire Headcount,Recent Hire Peer Percentile,Flag Pay Adjustment,Flag Internal Equity,Flag Organisational
+﻿city,job_code,job_level,Headcount,Average Headcount LTM,Voluntary Exits LTM,Expected Exits LTM,Attrition vs Baseline,Attrition p-value,Weighted Average TTC Compa-Ratio,Average Span of Control,Incumbent Headcount,Incumbent Peer Percentile,Recent Hire Headcount,Recent Hire Peer Percentile,Flag Pay Adjustment,Flag Internal Equity,Flag Organizational
 Bogotá,DAT,IC3,74,"70,67",24,"9,5333","2,52","0,000059","0,85","7,9",24,"0,5148",50,"0,4929",1,0,0
 Bogotá,DAT,IC4,76,"79,42",25,"10,7137","2,33","0,000134","0,85","7,9",36,"0,4863",40,"0,5123",1,0,0
 Bogotá,ENG,IC2,30,"30,83",5,"4,1596","1,20","0,402305","0,98","6,5",20,"0,5052",10,"0,4897",0,0,0

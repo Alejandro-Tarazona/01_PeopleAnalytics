@@ -57,7 +57,7 @@ COLUMNS = {
     "Recent Hire Peer Percentile": "recent_hire_percentile",
     "Flag Pay Adjustment": "flag_pay_adjustment",
     "Flag Internal Equity": "flag_internal_equity",
-    "Flag Organisational": "flag_organisational",
+    "Flag Organizational": "flag_organizational",
 }
 
 TEXT_COLUMNS = ["city", "job_code", "job_level"]
@@ -81,10 +81,10 @@ DECIMALS = {
     "recent_hire_percentile": 4,
     "flag_pay_adjustment": 0,
     "flag_internal_equity": 0,
-    "flag_organisational": 0,
+    "flag_organizational": 0,
 }
 
-FLAGS = ["flag_pay_adjustment", "flag_internal_equity", "flag_organisational"]
+FLAGS = ["flag_pay_adjustment", "flag_internal_equity", "flag_organizational"]
 
 DELIMITERS = [",", ";", "\t", "|"]
 
@@ -163,7 +163,7 @@ def _to_number(text: str, decimal: str) -> float:
 
 
 def load_export(path: Path | None = None) -> pd.DataFrame:
-    """Load the exported scan, normalised to the names and types used in tests."""
+    """Load the exported scan, normalized to the names and types used in tests."""
     path = EXPORT_PATH if path is None else path
 
     frame = next((f for f in (_read_with(path, d) for d in DELIMITERS) if f is not None), None)

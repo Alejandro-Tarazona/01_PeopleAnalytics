@@ -17,7 +17,7 @@ BEGIN
         RETURN;
     END IF;
 
-    -- Power BI reads the modelled star schema, never the landing zone.
+    -- Power BI reads the modeled star schema, never the landing zone.
     EXECUTE 'GRANT USAGE  ON SCHEMA analytics TO mpg_reader';
     EXECUTE 'GRANT SELECT ON ALL TABLES IN SCHEMA analytics TO mpg_reader';
     EXECUTE 'ALTER DEFAULT PRIVILEGES IN SCHEMA analytics GRANT SELECT ON TABLES TO mpg_reader';

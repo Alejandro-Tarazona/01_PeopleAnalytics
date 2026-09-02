@@ -175,7 +175,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Colour — which rule fired, or pale where none did.",
+                    "value": "Color — which rule fired, or pale where none did.",
                     "textStyle": {
                       "fontSize": "12pt"
                     }
@@ -305,7 +305,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Reports per manager. What separates a pay problem from an organisational one: Singapore sits at 15.1 against 6.7 company-wide, with a compa-ratio of 1.01.",
+                    "value": "Reports per manager. What separates a pay problem from an organizational one: Singapore sits at 15.1 against 6.7 company-wide, with a compa-ratio of 1.01.",
                     "textStyle": {
                       "fontSize": "12pt"
                     }

@@ -10,7 +10,7 @@ HRIS extracts to a costed recommendation for the executive committee.
 > cannot: a **known ground truth**. Because the anomalies were specified in advance,
 > the analysis can be scored rather than merely asserted. This repository is about
 > everything downstream of those files: ingestion, transformation, validation,
-> modelling, security and the analysis that ends in a recommendation.
+> modeling, security and the analysis that ends in a recommendation.
 
 ---
 
@@ -77,7 +77,7 @@ the SQL layer, compa-ratio in the semantic model.
 | `market_bands.xlsx` | 404 | Salary survey from the compensation vendor. Deliberately dirty. |
 | `fx_rates.csv` | 168 | Treasury. Actual and constant rate per month and currency. |
 | `ref_locations.csv` | 9 | Corporate master: cities, regions, legal entities, cost index. |
-| `ref_job_catalog.csv` | 100 | Job catalogue: family, level, track. |
+| `ref_job_catalog.csv` | 100 | Job catalog: family, level, track. |
 | `hris_employees.csv` | 6,009 | HRIS employee master. |
 | `hris_headcount_monthly.csv` | 107,124 | Monthly headcount snapshot. Grain: employee × month. |
 | `hris_movements.csv` | 12,338 | Events: hires, merit increases, promotions, exits. |
@@ -134,7 +134,7 @@ Company baseline: 13.5 % voluntary attrition, mean compa-ratio 0.98, mean span 6
   attrition is *below* LATAM's own 16.4 %. Only an analysis reading base salary in
   isolation flags it.
 - **D** is the **second decoy**: attrition at 2.1× the baseline with a compa-ratio
-  inside band and nobody below minimum. The cause is organisational — span of
+  inside band and nobody below minimum. The cause is organizational — span of
   control of 15.1 against 6.7 company-wide. A pay adjustment here would resolve nothing.
 
 Plus ~3 % of employees carrying random compa-ratio deviation with no segment pattern,
@@ -156,9 +156,9 @@ Three levels, 63 tests:
 
 | Level | What it proves |
 |---|---|
-| **Source** | Referential integrity, unique grain, closed domains, temporal coherence, and that the vendor survey was cleansed correctly — footer removed, duplicates dropped, `$120,000` parsed, `IC 3` normalised |
+| **Source** | Referential integrity, unique grain, closed domains, temporal coherence, and that the vendor survey was cleansed correctly — footer removed, duplicates dropped, `$120,000` parsed, `IC 3` normalized |
 | **Transformation** | Every derived value recomputed independently in pandas from the source files and compared against SQL: currency conversion, span of control, target cash, the five-peer suppression rule, and that every source movement is either loaded or explained |
-| **Reconciliation** | The Poisson tail itself, by two algorithms that share no arithmetic; then the DAX implementation of the prioritisation rule against a second implementation of the same specification in pandas — ten inputs and three verdicts, cell by cell — and then that implementation scored against the answer key |
+| **Reconciliation** | The Poisson tail itself, by two algorithms that share no arithmetic; then the DAX implementation of the prioritization rule against a second implementation of the same specification in pandas — ten inputs and three verdicts, cell by cell — and then that implementation scored against the answer key |
 
 This is double-entry bookkeeping applied to data: two independent
 implementations of the same calculation that must agree. It is the cheapest
@@ -184,7 +184,7 @@ refreshed and its scan exported to `data/exports/segment_scan_pbi.csv`; the othe
 
 ---
 
-## The prioritisation rule
+## The prioritization rule
 
 Which segments get recommended for action is an explicit, written rule rather
 than a judgement call over a dashboard: it can be reviewed, repeated by someone
@@ -196,7 +196,7 @@ in `validation/reference_rule.py` that exists only to check them.
 Three problems need three different answers, so there are three rules: **pay
 adjustment** (genuinely below market on total cash, with attrition to match),
 **internal equity** (incumbents fallen behind their own recent hires), and
-**organisational** (attrition is real but pay is not the cause).
+**organizational** (attrition is real but pay is not the cause).
 
 The single most consequential choice is reading **total target cash rather than
 base salary**. Base pay alone flags São Paulo Sales at 0.88 — a false positive
@@ -246,10 +246,10 @@ assumption and test its sensitivity**: the recommendation is evaluated at 1.0× 
 
 | Excluded | Reason |
 |---|---|
-| Gender pay-gap analysis | Requires multivariate statistical control. On synthetic data the result would not be interpretable, so the dimension exists in the model as an attribute but is not analysed. |
+| Gender pay-gap analysis | Requires multivariate statistical control. On synthetic data the result would not be interpretable, so the dimension exists in the model as an attribute but is not analyzed. |
 | CI/CD and Best Practice Analyzer | High value, outside the time budget. First candidate for extension. |
 | Fabric deployment / XMLA endpoint | Requires Premium capacity, unavailable in a personal environment. Its absence is why the reconciliation reads an exported file rather than querying the model live — [`reconciliation.md`](docs/case/reconciliation.md) sets out exactly what that costs. |
-| Licensed salary survey data | Proprietary. Bands are synthetic and calibrated against public cost-of-labour indices. |
+| Licensed salary survey data | Proprietary. Bands are synthetic and calibrated against public cost-of-labor indices. |
 
 ---
 
@@ -318,7 +318,7 @@ Step 3 comes after step 2 the first time only — the role has to exist before
 | Document | What it covers |
 |---|---|
 | [`docs/case/data-design.md`](docs/case/data-design.md) | How the source data was specified, and what was deliberately made dirty |
-| [`docs/case/detection-rule.md`](docs/case/detection-rule.md) | The prioritisation rule: every threshold and why it is what it is |
+| [`docs/case/detection-rule.md`](docs/case/detection-rule.md) | The prioritization rule: every threshold and why it is what it is |
 | [`docs/case/reconciliation.md`](docs/case/reconciliation.md) | How the model's output is checked and scored, and what that does not prove |
 | [`docs/case/rls.md`](docs/case/rls.md) | Row-level security, the minimum group size rule, and the limits of both |
 | [`docs/case/report.md`](docs/case/report.md) | What each report page is for, and what is deliberately left off it |

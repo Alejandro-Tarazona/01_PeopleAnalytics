@@ -49,7 +49,7 @@ needs_export = pytest.mark.skipif(not EXPORT_PATH.exists(), reason=NO_EXPORT)
 
 RULES = {"pay_adjustment": "flag_pay_adjustment",
          "internal_equity": "flag_internal_equity",
-         "organisational": "flag_organisational"}
+         "organizational": "flag_organizational"}
 
 
 @pytest.fixture(scope="session")
@@ -346,8 +346,8 @@ def test_precision_and_recall(exported, truth, capsys):
 
     Scored on expected_rule rather than on the business verdict. Segment D carries
     the verdict "dismiss" because no pay adjustment is warranted there, yet a rule
-    should still fire on it — the organisational one. Dismissing a segment for pay
-    and detecting it as an organisational problem are the same correct answer said
+    should still fire on it — the organizational one. Dismissing a segment for pay
+    and detecting it as an organizational problem are the same correct answer said
     two ways.
     """
     actionable = [s for s in truth["segments"] if s["expected_rule"]]
@@ -404,7 +404,7 @@ def test_the_materiality_floor_removes_most_of_the_noise(conn, bands):
     """Transparency about how much work the thirty-person floor is doing.
 
     It is a threshold with real consequences — a segment below it gets a
-    conversation with a manager, not a compensation programme — so its effect is
+    conversation with a manager, not a compensation program — so its effect is
     reported rather than left implicit.
     """
     scan = segment_scan(conn, bands)

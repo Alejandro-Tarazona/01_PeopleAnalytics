@@ -261,11 +261,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Flag Organisational"
+                  "Property": "Flag Organizational"
                 }
               },
-              "queryRef": "_Measures.Flag Organisational",
-              "nativeQueryRef": "Flag Organisational"
+              "queryRef": "_Measures.Flag Organizational",
+              "nativeQueryRef": "Flag Organizational"
             }
           ]
         }

@@ -131,7 +131,7 @@ table Dim_Market_Band
 				    }),
 				
 				    // The vendor's footer note sits in the job code column. Keeping only rows whose
-				    // code matches the catalogue's shape removes it without hard-coding the note's
+				    // code matches the catalog's shape removes it without hard-coding the note's
 				    // text, which the vendor is free to change between editions.
 				    OnlyJobCodes = Table.SelectRows(Trimmed, each
 				        Text.Length([Job Code]) = 3 and Text.Select([Job Code], {"A".."Z"}) = [Job Code]),

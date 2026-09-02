@@ -23,11 +23,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Annualised Payroll USD"
+                  "Property": "Annualized Payroll USD"
                 }
               },
-              "queryRef": "_Measures.Annualised Payroll USD",
-              "nativeQueryRef": "Annualised Payroll USD"
+              "queryRef": "_Measures.Annualized Payroll USD",
+              "nativeQueryRef": "Annualized Payroll USD"
             }
           ]
         }
@@ -42,7 +42,7 @@
                     "Entity": "_Measures"
                   }
                 },
-                "Property": "Annualised Payroll USD"
+                "Property": "Annualized Payroll USD"
               }
             },
             "direction": "Descending"
@@ -336,7 +336,7 @@
             }
           },
           "selector": {
-            "metadata": "_Measures.Annualised Payroll USD"
+            "metadata": "_Measures.Annualized Payroll USD"
           }
         }
       ],
@@ -351,7 +351,7 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Annualised Payroll USD Comparison Label"
+                  "Property": "Annualized Payroll USD Comparison Label"
                 }
               }
             }
@@ -364,7 +364,7 @@
                 }
               }
             ],
-            "metadata": "_Measures.Annualised Payroll USD",
+            "metadata": "_Measures.Annualized Payroll USD",
             "id": "field-a9ca8f25-50cc-114b-5fb6-03217cc4ef3b",
             "order": 0
           }
@@ -382,7 +382,7 @@
             }
           },
           "selector": {
-            "metadata": "_Measures.Annualised Payroll USD"
+            "metadata": "_Measures.Annualized Payroll USD"
           }
         }
       ]

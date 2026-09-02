@@ -47,7 +47,7 @@ DEFINE
             "Attrition vs Baseline",              [Attrition vs Baseline],
             "Attrition p-value",                  [Attrition p-value],
 
-            // --- Pay position and organisation ---------------------------------
+            // --- Pay position and organization ---------------------------------
             "Weighted Average TTC Compa-Ratio",   [Weighted Average TTC Compa-Ratio],
             "Average Span of Control",            [Average Span of Control],
 
@@ -60,7 +60,7 @@ DEFINE
             // --- The verdict ---------------------------------------------------
             "Flag Pay Adjustment",                [Flag Pay Adjustment],
             "Flag Internal Equity",               [Flag Internal Equity],
-            "Flag Organisational",                [Flag Organisational]
+            "Flag Organizational",                [Flag Organizational]
         )
 
 EVALUATE

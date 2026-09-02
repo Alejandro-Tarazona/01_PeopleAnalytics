@@ -1,4 +1,4 @@
-"""Reference implementation of the segment prioritisation rule.
+"""Reference implementation of the segment prioritization rule.
 
 The findings in this project come from the semantic model. This module does not
 produce them: it re-implements the same specification a second time, in pandas,
@@ -118,7 +118,7 @@ GROUP BY 1, 2, 3
 def segment_scan(conn, bands: pd.DataFrame | None = None) -> pd.DataFrame:
     """Build the city x job x level table the three rules are evaluated against.
 
-    One row per cell in the organisation. The rule does not know the four
+    One row per cell in the organization. The rule does not know the four
     designed segments exist, which is what makes scoring it meaningful.
     """
     bands = load_market_bands() if bands is None else bands
@@ -214,7 +214,7 @@ def segment_scan(conn, bands: pd.DataFrame | None = None) -> pd.DataFrame:
 
     cells["flag_pay_adjustment"] = _rule_pay_adjustment(cells, company_span)
     cells["flag_internal_equity"] = _rule_internal_equity(cells)
-    cells["flag_organisational"] = _rule_organisational(cells, company_span)
+    cells["flag_organizational"] = _rule_organizational(cells, company_span)
 
     cells.attrs["baseline_rate"] = baseline_rate
     cells.attrs["company_mean_span"] = company_span
@@ -250,7 +250,7 @@ def _rule_internal_equity(cells: pd.DataFrame) -> pd.Series:
             & (cells["recent_hire_percentile"] >= COMPRESSION_HIGH))
 
 
-def _rule_organisational(cells: pd.DataFrame, company_span: float) -> pd.Series:
+def _rule_organizational(cells: pd.DataFrame, company_span: float) -> pd.Series:
     """Attrition is real, pay is not the cause, span of control is."""
     return (_significant(cells)
             & (cells["ttc_compa_ratio"] >= TTC_IN_BAND)
@@ -261,7 +261,7 @@ def flagged_cells(scan: pd.DataFrame) -> pd.DataFrame:
     """Long-form view: one row per cell per rule that fired."""
     rules = {"pay_adjustment": "flag_pay_adjustment",
              "internal_equity": "flag_internal_equity",
-             "organisational": "flag_organisational"}
+             "organizational": "flag_organizational"}
     parts = [scan[scan[column]].assign(rule=name) for name, column in rules.items()]
     return (pd.concat(parts, ignore_index=True)
             .sort_values(["rule"] + CELL).reset_index(drop=True))

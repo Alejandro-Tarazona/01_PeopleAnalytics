@@ -263,7 +263,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Cells tripping at least one of the three prioritisation rules. A cell tripping two counts once: the question is how many places need a conversation, not how many diagnoses were issued.",
+                    "value": "Cells tripping at least one of the three prioritization rules. A cell tripping two counts once: the question is how many places need a conversation, not how many diagnoses were issued.",
                     "textStyle": {
                       "fontSize": "12pt"
                     }

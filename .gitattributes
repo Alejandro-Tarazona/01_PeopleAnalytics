@@ -6,7 +6,7 @@
 *.csv text eol=lf
 *.json text eol=lf
 
-# Binaries: never normalise, never diff as text.
+# Binaries: never normalize, never diff as text.
 *.xlsx binary
 *.pbix binary
 *.pptx binary

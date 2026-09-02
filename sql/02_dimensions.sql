@@ -63,7 +63,7 @@ FROM raw.ref_job_catalog;
 ALTER TABLE analytics.d_job ADD PRIMARY KEY (job_key);
 CREATE UNIQUE INDEX ux_d_job_natural ON analytics.d_job (job_code, job_level);
 
--- --- Organisation -------------------------------------------------------------
+-- --- Organization -------------------------------------------------------------
 CREATE TABLE analytics.d_org AS
 SELECT
     row_number() OVER (ORDER BY business_unit, department)::int AS org_key,

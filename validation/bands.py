@@ -64,7 +64,7 @@ def load_market_bands() -> pd.DataFrame:
     df["job_code"] = df["job_code"].astype(str).str.strip()                                             # Convert the "job_code" column to string type and strip any leading or trailing whitespace from the values in that column
 
     # The vendor's footer note sits in the job code column. Keeping only rows
-    # whose code matches the catalogue's shape removes it without hard-coding
+    # whose code matches the catalog's shape removes it without hard-coding
     # the note's text, which the vendor is free to change between editions.
     
     df = df[df["job_code"].str.fullmatch(r"[A-Z]{3}")]                                                  # Keep only rows where the "job_code" column matches the regular expression pattern "[A-Z]{3}", which means the job code consists of exactly three uppercase letters. This filters out any rows that do not conform to this expected format, including the vendor's footer note that may be present in the job code column.

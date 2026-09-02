@@ -28,7 +28,7 @@ as a controlled test bed with a known ground truth.
   (`rate_local_per_usd_constant`). The actual rate is only for Finance reconciliation.
 - Span of control is derived from `manager_id`, not carried as a column.
 
-## Modelling conventions
+## Modeling conventions
 
 - Star schema. Facts prefixed `Facts_`, dimensions `Dim_`; `analytics` tables in
   PostgreSQL keep the lower-case `f_` / `d_` forms they are created with.
@@ -78,12 +78,12 @@ as a controlled test bed with a known ground truth.
   that proposes a salary adjustment for them is wrong.
 - C's real cause is a variable-pay target above market: the correct analysis compares
   **total target cash**, not base salary.
-- D's real cause is organisational (span of control), not financial.
+- D's real cause is organizational (span of control), not financial.
 - If case figures disagree with what the data shows, **the data wins**. Adjust the
   narrative, never the other way round.
 
 ## Out of scope
 
-- Do not analyse gender pay gap. The dimension exists in the model as an attribute
+- Do not analyze gender pay gap. The dimension exists in the model as an attribute
   only; the exclusion is documented in the README.
 - Do not add CI/CD or Best Practice Analyzer unless asked. Outside the time budget.

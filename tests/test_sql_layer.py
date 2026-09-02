@@ -49,7 +49,7 @@ def test_the_movement_fact_loses_only_the_events_it_declares(conn, raw_movements
 
     That attribution needs the employee to appear in at least one month-end
     snapshot, and 76 people do not: they left on the first month-end of the horizon.
-    Their 77 events cannot be attributed to any organisation. Dropping them is a
+    Their 77 events cannot be attributed to any organization. Dropping them is a
     decision, taken in 03_facts.sql behind an explicit filter, and this test is what
     stops it from quietly becoming something else.
     """
@@ -75,7 +75,7 @@ def test_the_movement_fact_loses_only_the_events_it_declares(conn, raw_movements
 def test_movement_events_are_attributed_to_the_position_held_at_the_time(conn):
     """The keys point at the snapshot on or before the event, not at a random one.
 
-    An exit in March belongs to the March organisation. Reading the keys off the
+    An exit in March belongs to the March organization. Reading the keys off the
     employee's final surviving row gives the same answer for someone who never
     moved and the wrong one for everybody else.
     """

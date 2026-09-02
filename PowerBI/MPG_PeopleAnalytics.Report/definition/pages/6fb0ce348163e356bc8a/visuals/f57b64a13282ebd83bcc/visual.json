@@ -34,7 +34,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Click here to see Headcount and Annualised Payroll'"
+                  "Value": "'Click here to see Headcount and Annualized Payroll'"
                 }
               }
             }

@@ -4,7 +4,7 @@
     "status": "Design artefact. Every observed figure below is reproduced by the SQL layer (sql/build.sql) and the band cleansing, so the answer key is verifiable from the repository itself.",
     "horizon": "2024-09 .. 2026-08",
     "warning": "Do not edit to make an analysis pass. This is the answer key against which detection precision and recall are measured.",
-    "scoring": "Each segment declares the rule that should fire on it, or null when no rule should. The prioritisation rule is specified in detection-rule.md and implemented as DAX measures; block 6 scores that implementation against this file and reports precision and recall."
+    "scoring": "Each segment declares the rule that should fire on it, or null when no rule should. The prioritization rule is specified in detection-rule.md and implemented as DAX measures; block 6 scores that implementation against this file and reports precision and recall."
   },
   "baseline": {
     "headcount": 4500,
@@ -136,8 +136,8 @@
       "verdict": "dismiss",
       "priority": "none",
       "root_cause": "Excessive span of control (>12 direct reports)",
-      "correct_action": "Organisational intervention: add a supervisory layer",
-      "description": "SECOND DESIGNED DISTRACTOR. Attrition at 2.1x the baseline with a compa-ratio of 1.01 and nobody below band. The cause is organisational, not financial: span of control of 15.1 against 6.7 across the rest of the company.",
+      "correct_action": "Organizational intervention: add a supervisory layer",
+      "description": "SECOND DESIGNED DISTRACTOR. Attrition at 2.1x the baseline with a compa-ratio of 1.01 and nobody below band. The cause is organizational, not financial: span of control of 15.1 against 6.7 across the rest of the company.",
       "definition": {
         "city": "Singapore",
         "job_code": "RSK",
@@ -155,14 +155,14 @@
         "mean_base_salary_usd": 77779,
         "share_below_band": 0.0
       },
-      "expected_rule": "organisational"
+      "expected_rule": "organizational"
     }
   ],
   "background_noise": {
     "share_of_employees": 0.03,
     "compa_ratio_sd": 0.15,
     "employees_affected": 174,
-    "note": "Random compa-ratio deviation with no segment pattern. Must not produce any prioritised segment."
+    "note": "Random compa-ratio deviation with no segment pattern. Must not produce any prioritized segment."
   },
   "mean_compa_ratio_by_region": {
     "APAC": 1.006,

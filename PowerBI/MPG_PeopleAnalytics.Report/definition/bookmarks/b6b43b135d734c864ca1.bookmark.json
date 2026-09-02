@@ -887,7 +887,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Annualised Payroll USD"
+                      "Property": "Annualized Payroll USD"
                     }
                   },
                   "howCreated": 0
@@ -962,7 +962,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Annualised Payroll USD"
+                      "Property": "Annualized Payroll USD"
                     }
                   },
                   "howCreated": 0
@@ -982,7 +982,7 @@
                           "Entity": "_Measures"
                         }
                       },
-                      "Property": "Annualised Payroll USD"
+                      "Property": "Annualized Payroll USD"
                     }
                   }
                 }

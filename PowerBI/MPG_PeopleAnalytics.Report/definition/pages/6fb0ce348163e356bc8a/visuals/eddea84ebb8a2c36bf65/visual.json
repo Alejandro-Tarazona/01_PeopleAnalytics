@@ -60,11 +60,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Annualised Payroll USD"
+                  "Property": "Annualized Payroll USD"
                 }
               },
-              "queryRef": "_Measures.Annualised Payroll USD",
-              "nativeQueryRef": "Annualised Payroll USD"
+              "queryRef": "_Measures.Annualized Payroll USD",
+              "nativeQueryRef": "Annualized Payroll USD"
             }
           ]
         }
@@ -176,7 +176,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Headcount and Annualised Payroll USD over Time'"
+                  "Value": "'Headcount and Annualized Payroll USD over Time'"
                 }
               }
             }
@@ -238,7 +238,7 @@
                 "Entity": "_Measures"
               }
             },
-            "Property": "Annualised Payroll USD"
+            "Property": "Annualized Payroll USD"
           }
         },
         "type": "Advanced"

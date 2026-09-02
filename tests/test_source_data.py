@@ -112,7 +112,7 @@ def test_cleansing_removed_duplicates_and_footer(bands):
         "the footer note survived cleansing"
 
 
-def test_cleansing_normalised_levels_and_codes(bands):
+def test_cleansing_normalized_levels_and_codes(bands):
     assert not bands["job_level"].str.contains(" ").any(), "levels still contain 'IC 3' spacing"
     assert (bands["job_code"] == bands["job_code"].str.strip()).all(), \
         "job codes still carry stray whitespace"
