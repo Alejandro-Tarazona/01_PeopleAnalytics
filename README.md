@@ -97,7 +97,7 @@ purpose.
 | 5 · Hierarchical RLS and minimum group size rule | **Complete** |
 | 6 · Python ↔ DAX reconciliation and detection scoring | **Complete** |
 | 7 · Four-page Power BI report | **Complete** |
-| 8 · Executive presentation | Pending |
+| 8 · Executive presentation | **Complete** |
 
 ---
 
