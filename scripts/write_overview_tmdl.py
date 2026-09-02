@@ -922,9 +922,18 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         "Span vs Company Label",
         "Span of control against the company mean, as one line: 15.1 vs 6.7.\n"
         "Rule 3 fires on the ratio between the two, and a card showing 15.1 alone leaves the\n"
-        "reader to remember what normal looks like.",
-        "FORMAT ( [Average Span of Control], \"0.0\", \"en-US\" )\n"
-        "    & \" vs \" & FORMAT ( [Company Span Baseline], \"0.0\", \"en-US\" )",
+        "reader to remember what normal looks like.\n"
+        "\n"
+        "Falls back to the numeric baseline rather than to text where the span is blank. A\n"
+        "measure whose every branch returns a string is typed as text, and the multi-row card\n"
+        "on the recommendation page lays a text-only field out in a single column instead of\n"
+        "the two it uses for the other segments - the card then overflows its height and clips\n"
+        "its own row labels. Keeping one numeric branch keeps the layout.",
+        "VAR Format_span =\n"
+        "    FORMAT ( [Average Span of Control], \"0.0\", \"en-US\" )\n"
+        "        & \" vs \" & FORMAT ( [Company Span Baseline], \"0.0\", \"en-US\" )\n"
+        "RETURN\n"
+        "    IF ( ISBLANK ( [Average Span of Control] ), [Company Span Baseline], Format_span )",
         "",
         REPORT,
     ),
@@ -940,8 +949,12 @@ MEASURES: list[tuple[str, str, str, str, str]] = [
         "filter returns blank and nobody in Singapore Risk & Compliance sits above their band\n"
         "maximum. One person crossing that line would have turned the words \"Not the lever\"\n"
         "into a percentage, on a card whose whole argument is that this segment is not a pay\n"
-        "problem.",
-        "IF ( [Flag Organizational] = 1, \"Not the lever\", [Cost to Target Label] )",
+        "problem.\n"
+        "\n"
+        "The other branch returns [Exposure Addressed USD] rather than a formatted string, for\n"
+        "the same reason [Span vs Company Label] keeps a numeric branch: a field the card reads\n"
+        "as text-only forces a single-column layout that overflows and clips its labels.",
+        "IF ( [Flag Organizational] = 1, \"Not the lever\", [Exposure Addressed USD] )",
         "",
         REPORT,
     ),

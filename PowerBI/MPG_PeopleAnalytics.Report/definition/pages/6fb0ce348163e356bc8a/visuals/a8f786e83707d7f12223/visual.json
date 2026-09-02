@@ -23,12 +23,12 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Cost to Band Minimum"
+                  "Property": "Recommended Spend USD"
                 }
               },
-              "queryRef": "_Measures.Cost to Band Minimum",
-              "nativeQueryRef": "Targeted alternative",
-              "displayName": "Targeted alternative"
+              "queryRef": "_Measures.Recommended Spend USD",
+              "nativeQueryRef": "Target Alternative",
+              "displayName": "Target Alternative"
             }
           ]
         }
@@ -324,6 +324,20 @@
           },
           "selector": {
             "id": "default"
+          }
+        },
+        {
+          "properties": {
+            "labelPrecision": {
+              "expr": {
+                "Literal": {
+                  "Value": "2L"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "_Measures.Recommended Spend USD"
           }
         }
       ]

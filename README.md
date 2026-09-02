@@ -1,5 +1,32 @@
 # MPG People & Corporate Services Analytics
 
+---
+
+## The result, first
+
+| | |
+|---|---|
+| [**Executive presentation**](MPG_PeopleAnalytics_Executive.pptx) | 16 slides. The three questions the CEO asked, the four segments found, what each costs, the risks, and the pilot that tests the recommendation before it is rolled out. |
+| [**Power BI report**](MPG_PeopleAnalytics_PBI_Report.pdf) | The four report pages, each followed by its own documentation panel. |
+
+**The short version.** HR proposed a blanket 6 % salary adjustment across the LATAM
+hub: **$5.38M**, of which 95 % would land on people already paid at or above their
+band minimum, leaving 23 people below it. The analysis recommends **$1.15M** on two
+segments instead, against **$5.76M** of attrition exposure, paying back in under five
+months — and it recommends spending the first **$349K** as a controlled pilot rather
+than as a rollout.
+
+Scored against a ground truth written before the data existed: **precision 100 %,
+recall 100 %** on 746 segments.
+
+[![The recommendation page of the Power BI report](docs/img/report-what-to-do.png)](MPG_PeopleAnalytics_PBI_Report.pdf)
+
+<sub>*What to do* — the fourth report page. Three findings, three different levers, and
+the one segment deliberately left off the action list. Click through for all four pages
+with their documentation panels.</sub>
+
+---
+
 An end-to-end business case on workforce cost exposure and retention risk: from raw
 HRIS extracts to a costed recommendation for the executive committee.
 
@@ -27,25 +54,6 @@ derived figure is computed twice — once in the semantic model, once independen
 Python — and reconciled cell by cell, so a generated measure that is subtly wrong
 fails a test rather than reaching a slide. Several did, and are recorded in
 [`docs/case/reconciliation.md`](docs/case/reconciliation.md).
-
----
-
-## The result, first
-
-| | |
-|---|---|
-| [**Executive presentation**](MPG_PeopleAnalytics_Executive.pptx) | 16 slides. The three questions the CEO asked, the four segments found, what each costs, the risks, and the pilot that tests the recommendation before it is rolled out. |
-| [**Power BI report**](MPG_PeopleAnalytics_PBI_Report.pdf) | The four report pages, each followed by its own documentation panel. |
-
-**The short version.** HR proposed a blanket 6 % salary adjustment across the LATAM
-hub: **$5.38M**, of which 95 % would land on people already paid at or above their
-band minimum, leaving 23 people below it. The analysis recommends **$1.15M** on two
-segments instead, against **$5.76M** of attrition exposure, paying back in under five
-months — and it recommends spending the first **$349K** as a controlled pilot rather
-than as a rollout.
-
-Scored against a ground truth written before the data existed: **precision 100 %,
-recall 100 %** on 746 segments.
 
 ---
 

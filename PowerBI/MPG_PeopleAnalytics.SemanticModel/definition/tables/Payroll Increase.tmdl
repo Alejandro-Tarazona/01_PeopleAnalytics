@@ -1,7 +1,7 @@
 /// The blanket salary increase being simulated, as a share of base pay.
 /// Disconnected from the star: no relationship, so it filters nothing on its own and
 /// is read only by the measures in the "09 Simulation" folder.
-/// 
+///
 /// Zero to fifteen per cent in half-point steps. The default is six, which is the
 /// proposal actually on the table - the executive committee is being asked to approve
 /// a blanket 6% across the LATAM hub, and a reader who opens the page should see that
@@ -28,4 +28,3 @@ table 'Payroll Increase'
 		source = GENERATESERIES ( 0, 0.15, 0.005 )
 
 	annotation PBI_Id = PayrollIncrease
-
