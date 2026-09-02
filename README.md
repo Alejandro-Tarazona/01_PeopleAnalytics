@@ -14,6 +14,22 @@ HRIS extracts to a costed recommendation for the executive committee.
 
 ---
 
+## How this was built
+
+Claude Code was used as an AI development partner throughout the project. I defined
+the business requirements, the analytical approach, the architecture, the validation
+criteria and the final recommendations; Claude Code supported implementation across
+SQL, Python, Power Query, DAX, documentation and debugging. Generated output was
+reviewed and validated before being incorporated into the final solution.
+
+The validation suite is what makes that division of labor safe to state. Every
+derived figure is computed twice — once in the semantic model, once independently in
+Python — and reconciled cell by cell, so a generated measure that is subtly wrong
+fails a test rather than reaching a slide. Several did, and are recorded in
+[`docs/case/reconciliation.md`](docs/case/reconciliation.md).
+
+---
+
 ## The result, first
 
 | | |
@@ -331,22 +347,6 @@ Source data is committed; nothing needs to be generated.
 
 Step 3 comes after step 2 the first time only — the role has to exist before
 `build.sql` can grant to it, and from then on `build.sql` handles it.
-
----
-
-## How this was built
-
-Claude Code was used as an AI development partner throughout the project. I defined
-the business requirements, the analytical approach, the architecture, the validation
-criteria and the final recommendations; Claude Code supported implementation across
-SQL, Python, Power Query, DAX, documentation and debugging. Generated output was
-reviewed and validated before being incorporated into the final solution.
-
-The validation suite is what makes that division of labor safe to state. Every
-derived figure is computed twice — once in the semantic model, once independently in
-Python — and reconciled cell by cell, so a generated measure that is subtly wrong
-fails a test rather than reaching a slide. Several did, and are recorded in
-[`docs/case/reconciliation.md`](docs/case/reconciliation.md).
 
 ---
 
