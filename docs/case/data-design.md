@@ -81,10 +81,10 @@ verifiable from the repository, not asserted.
 
 | Seg | Segment | HC | Base compa | TTC compa | Below band | Span | Attrition | vs. baseline | Verdict |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| **A** | Data & Analytics IC3–IC4 · Bogotá | 150 | 0.85 | 0.85 | 86 % | 7.9 | 34.7 % | 2.57× | **Detect — high priority** |
-| **B** | Engineering IC5 · Dublin | 90 | 0.99 | 0.99 | 22 % | 7.6 | 12.2 % | 0.91× | **Detect — medium priority** |
-| **C** | Sales IC3–M1 · São Paulo | 122 | 0.88 | 0.99 | 62 % | 5.0 | 15.8 % | 1.17× | **Dismiss** |
-| **D** | Risk & Compliance IC2 · Singapore | 100 | 1.01 | 1.01 | 4 % | 15.1 | 32.9 % | 2.44× | **Dismiss** |
+| **A** | Data & Analytics IC3–IC4 · Bogotá | 150 | 0.85 | 0.85 | 15 % | 7.9 | 32.7 % | 2.42× | **Detect — high priority** |
+| **B** | Engineering IC5 · Dublin | 90 | 0.99 | 0.99 | 0 % | 7.6 | 10.0 % | 0.74× | **Detect — medium priority** |
+| **C** | Sales IC3–M1 · São Paulo | 122 | 0.88 | 0.99 | 7 % | 5.0 | 15.8 % | 1.17× | **Dismiss** |
+| **D** | Risk & Compliance IC2 · Singapore | 100 | 1.01 | 1.01 | 0 % | 15.1 | 28.0 % | 2.07× | **Dismiss** |
 
 Company baseline: 13.5 % voluntary attrition, mean compa-ratio 0.98, mean span 6.7.
 Voluntary attrition by region: LAC 16.4 % · APAC 14.8 % · EMEA 12.9 % · NAM 9.5 %.
@@ -92,8 +92,10 @@ Mean compa-ratio by region: APAC 1.01 · NAM 1.00 · EMEA 0.99 · LAC 0.94.
 
 ### A — the strong signal
 
-Sustained pay drift. Mean compa-ratio of 0.85, with **86 % of the segment below band
-minimum**, and attrition at 2.6× the baseline. This is the segment a correct analysis
+Sustained pay drift. Mean compa-ratio of 0.85 and attrition at **2.4× the baseline**.
+Only 15 % of the segment sits below band minimum: the band floor is 80 % of midpoint,
+so drift of this size moves the whole distribution without pushing most of it under
+the floor. This is the segment a correct analysis
 must find and prioritize, and the one where a targeted adjustment pays for itself.
 
 ### B — invisible in the average

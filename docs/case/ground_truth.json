@@ -57,8 +57,8 @@
         "mean_base_compa_ratio": 0.852,
         "mean_ttc_compa_ratio": 0.852,
         "mean_span_of_control": 7.89,
-        "voluntary_attrition_ltm": 0.3465,
-        "attrition_vs_baseline": 2.57,
+        "voluntary_attrition_ltm": 0.3265,
+        "attrition_vs_baseline": 2.42,
         "mean_base_salary_usd": 46622,
         "share_below_band": 0.153
       },
@@ -84,8 +84,8 @@
         "mean_base_compa_ratio": 0.989,
         "mean_ttc_compa_ratio": 0.989,
         "mean_span_of_control": 7.62,
-        "voluntary_attrition_ltm": 0.1222,
-        "attrition_vs_baseline": 0.91,
+        "voluntary_attrition_ltm": 0.1,
+        "attrition_vs_baseline": 0.74,
         "mean_base_salary_usd": 172480,
         "share_below_band": 0.0,
         "cohort_incumbents_3y_plus": {
@@ -150,8 +150,8 @@
         "mean_base_compa_ratio": 1.006,
         "mean_ttc_compa_ratio": 1.006,
         "mean_span_of_control": 15.1,
-        "voluntary_attrition_ltm": 0.3295,
-        "attrition_vs_baseline": 2.44,
+        "voluntary_attrition_ltm": 0.2795,
+        "attrition_vs_baseline": 2.07,
         "mean_base_salary_usd": 77779,
         "share_below_band": 0.0
       },

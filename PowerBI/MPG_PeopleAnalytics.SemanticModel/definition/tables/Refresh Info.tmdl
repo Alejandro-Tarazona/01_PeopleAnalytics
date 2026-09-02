@@ -3,7 +3,7 @@
 /// every query and would report when the reader opened the page; in a calculated
 /// table it is evaluated once at refresh and frozen, which is the question the
 /// banner is actually asking.
-///
+/// 
 /// The clock it reads is the one running the refresh: local time in Power BI
 /// Desktop, UTC in the Service. Anyone publishing this needs to know that before
 /// they put the caption in front of a reader in another timezone.
@@ -27,3 +27,4 @@ table 'Refresh Info'
 		source = ROW ( "refreshed_at", NOW () )
 
 	annotation PBI_Id = RefreshInfo
+

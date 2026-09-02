@@ -112,10 +112,10 @@ Four anomalies are built into the data. **Only two should be acted on.**
 
 | Seg | Segment | HC | Base compa | TTC compa | Below band | Span | Attrition | vs. baseline | Verdict |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| **A** | Data & Analytics IC3–IC4 · Bogotá | 150 | **0.85** | 0.85 | 15 % | 7.9 | 34.7 % | **2.57×** | **Detect — high** |
-| **B** | Engineering IC5 · Dublin | 90 | 0.99 | 0.99 | 0 % | 7.6 | 12.2 % | 0.91× | **Detect — medium** |
+| **A** | Data & Analytics IC3–IC4 · Bogotá | 150 | **0.85** | 0.85 | 15 % | 7.9 | 32.7 % | **2.42×** | **Detect — high** |
+| **B** | Engineering IC5 · Dublin | 90 | 0.99 | 0.99 | 0 % | 7.6 | 10.0 % | 0.74× | **Detect — medium** |
 | **C** | Sales IC3–M1 · São Paulo | 122 | 0.88 | **0.99** | 7 % | 5.0 | 15.8 % | 1.17× | **Dismiss** |
-| **D** | Risk & Compliance IC2 · Singapore | 100 | 1.01 | 1.01 | 0 % | **15.1** | 32.9 % | **2.44×** | **Dismiss** |
+| **D** | Risk & Compliance IC2 · Singapore | 100 | 1.01 | 1.01 | 0 % | **15.1** | 28.0 % | **2.07×** | **Dismiss** |
 
 Company baseline: 13.5 % voluntary attrition, mean compa-ratio 0.98, mean span 6.7.
 

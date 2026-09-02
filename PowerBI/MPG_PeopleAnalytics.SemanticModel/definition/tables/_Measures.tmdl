@@ -751,7 +751,7 @@ table _Measures
 	/// [Voluntary Attrition % LTM] but blank until the trailing twelve months are actually
 	/// twelve months. For charting only - the detection rule and the reconciliation read the
 	/// unguarded measure and must go on doing so.
-	///
+	/// 
 	/// The rate divides exits over a trailing window by the average headcount across that
 	/// same window, and [Average Headcount LTM] divides by a constant twelve. Early in the
 	/// horizon the window holds fewer than twelve months of snapshots, so the denominator is
@@ -897,12 +897,12 @@ table _Measures
 
 	/// How many city / job / level cells the rule actually looks at. The denominator that
 	/// stops "four segments" being read as "four out of a handful".
-	///
+	/// 
 	/// Counted over the trailing twelve months, not at the last month-end, because that is
 	/// the window every figure in the rule is computed over. Counting the closing snapshot
 	/// instead returns 722 - it drops every cell that existed during the year and was empty
 	/// by August, which are exactly the cells an attrition analysis should not lose sight of.
-	///
+	/// 
 	/// The union with the movement fact adds one cell: a cell whose last leaver went before
 	/// any surviving snapshot, so it has exits and no exposure. One row in 746, and it is the
 	/// difference between this card agreeing with validation/reference_rule.py and quietly
@@ -1039,7 +1039,7 @@ table _Measures
 	/// Annualized cost of lifting everyone paid below the selected compa-ratio up to it.
 	/// The number a targeted adjustment actually costs, and the counterpart to
 	/// [Blanket Increase Cost USD] on the overview.
-	///
+	/// 
 	/// [Cost to Band Minimum] answers a different and much weaker question. The band minimum
 	/// sits at 80% of midpoint across this survey, so a segment averaging 0.85 has only its
 	/// lower tail beneath the floor. Lifting Bogota Data & Analytics to its band minimum
@@ -1138,7 +1138,7 @@ table _Measures
 	/// The name is the row label the multi-row card displays, which is why it reads as a
 	/// phrase rather than as a measure name - renaming it would change what the reader sees
 	/// on the card, so it stays.
-	///
+	/// 
 	/// It keys off the organizational flag rather than off a blank. The first version tested
 	/// ISBLANK([% Above Band Maximum]), which worked only because COUNTROWS over an empty
 	/// filter returns blank and nobody in Singapore Risk & Compliance sits above their band

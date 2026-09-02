@@ -81,8 +81,10 @@
         "visualHeader": [
           {
             "show": true,
-            "foreground": { "solid": { "color": "#98A2B3" } },
-            "transparency": 100
+            "foreground": { "solid": { "color": "#475467" } },
+            "background": { "solid": { "color": "#FFFFFF" } },
+            "border": { "solid": { "color": "#E4E7EC" } },
+            "transparency": 0
           }
         ],
         "labels": [
