@@ -322,5 +322,6 @@ Step 3 comes after step 2 the first time only — the role has to exist before
 | [`docs/case/reconciliation.md`](docs/case/reconciliation.md) | How the model's output is checked and scored, and what that does not prove |
 | [`docs/case/rls.md`](docs/case/rls.md) | Row-level security, the minimum group size rule, and the limits of both |
 | [`docs/case/report.md`](docs/case/report.md) | What each report page is for, and what is deliberately left off it |
+| [`docs/MPG_PeopleAnalytics_PBI_Report.pdf`](docs/MPG_PeopleAnalytics_PBI_Report.pdf) | The four report pages, each followed by its documentation panel |
 | [`docs/pbi-model.md`](docs/pbi-model.md) | The semantic model: tables, relationships, and the reasoning behind each design decision |
 | [`CLAUDE.md`](CLAUDE.md) | Conventions this repository is held to |
