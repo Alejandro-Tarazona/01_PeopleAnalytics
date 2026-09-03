@@ -278,7 +278,7 @@ lost productivity during ramp-up.
 | Management (M1–M4) | 2.0× |
 
 HR literature puts the range between 0.5× and 2× of annual salary, rising with role
-specialisation and ramp time. These figures are widely cited and rarely audited, so
+specialization and ramp time. These figures are widely cited and rarely audited, so
 the position taken here is not to defend a precise number but to **declare it as an
 assumption and test its sensitivity**: the recommendation is evaluated at 1.0× / 1.5×
 / 2.0×, and slide 11 of the presentation reports the result: it does not stop
