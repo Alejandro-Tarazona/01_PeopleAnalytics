@@ -79,6 +79,22 @@ def text(s, x, y, w, h, blocks, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP):
     return box
 
 
+def link(s, x, y, w, h, label, url, size, colour):
+    """A clickable line of text. A URL nobody can click is a URL nobody will type."""
+    box = s.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
+    tf = box.text_frame
+    tf.word_wrap = True
+    tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = 0
+    run = tf.paragraphs[0].add_run()
+    run.text = label
+    run.font.size = Pt(size)
+    run.font.name = BODY_FONT
+    run.hyperlink.address = url
+    # The hyperlink would otherwise inherit the theme's link colour, which is not ours.
+    run.font.color.rgb = rgb(colour)
+    return box
+
+
 def title(s, t, sub=None, dark=False):
     text(s, 0.75, 0.52, W - 1.5, 1.0,
          [(t, 32, WHITE if dark else NAVY, True, HEAD_FONT, 0)])
@@ -174,10 +190,20 @@ text(s, 1.0, 2.35, 11.3, 1.5,
 text(s, 1.0, 3.75, 10.5, 1.0,
      [("A blanket 6 % across LATAM would cost $5.38M and leave the worst-paid "
        "segment where it is. $1.15M, targeted, does more.", 16, PALE, False, BODY_FONT, 0)])
-text(s, 1.0, 5.55, 11.3, 0.9,
+text(s, 1.0, 5.15, 11.3, 0.9,
      [("MPG People & Corporate Services  ·  Executive Committee", 12, LIGHT, False, BODY_FONT, 4),
       ("4,500 employees · 9 cities · 24 months · 746 segments scanned",
        11, "8FA6CC", False, BODY_FONT, 0)])
+# The synthetic data is not a caveat to bury. It is the reason the analysis can be
+# scored at all: the anomalies were specified before the data was generated, so
+# precision and recall mean something here that they could not mean on real records.
+text(s, 1.0, 6.02, 8.8, 0.8,
+     [("Built on synthetic data, generated to a documented specification. Real "
+       "compensation data is confidential — and because the anomalies were designed in "
+       "advance, the analysis can be scored rather than asserted.",
+       10.5, "8FA6CC", False, BODY_FONT, 0)])
+link(s, 1.0, 6.62, 11.3, 0.3, "github.com/Alejandro-Tarazona/01_PeopleAnalytics",
+     "https://github.com/Alejandro-Tarazona/01_PeopleAnalytics", 11, LIGHT)
 s.notes_slide.notes_text_frame.text = (
     "The recommendation is not to spend less for its own sake. It is that the blanket "
     "proposal spends where the evidence is not.")
@@ -516,5 +542,38 @@ text(s, 7.25, 2.62, 5.05, 2.6,
        12.5, WHITE, True, BODY_FONT, 0)])
 
 prs.save(OUT)
+
+
+def recolor_hyperlinks(path, colour):
+    """Repaint the theme's hyperlink colour.
+
+    A run carrying <a:hlinkClick> takes its colour from the theme, not from its own
+    solidFill, so setting font.color on the run has no effect: the link renders in
+    Office's default hyperlink blue, which on a navy title slide is invisible. The
+    colour lives in the theme part and nowhere python-pptx exposes, so the file is
+    repacked with the two values replaced.
+    """
+    import re
+    import shutil
+    import zipfile
+
+    src = path.with_suffix(".tmp")
+    shutil.move(path, src)
+    with zipfile.ZipFile(src) as zin, zipfile.ZipFile(
+            path, "w", zipfile.ZIP_DEFLATED) as zout:
+        for item in zin.infolist():
+            blob = zin.read(item.filename)
+            if item.filename.startswith("ppt/theme/"):
+                xml = blob.decode("utf-8")
+                xml = re.sub(r'(<a:hlink><a:srgbClr val=")[0-9A-Fa-f]{6}',
+                             r"\g<1>" + colour, xml)
+                xml = re.sub(r'(<a:folHlink><a:srgbClr val=")[0-9A-Fa-f]{6}',
+                             r"\g<1>" + colour, xml)
+                blob = xml.encode("utf-8")
+            zout.writestr(item, blob)
+    src.unlink()
+
+
+recolor_hyperlinks(OUT, LIGHT)
 print(f"wrote {OUT.name} - {len(prs.slides.__iter__.__self__._sldIdLst)} slides, "
       f"{OUT.stat().st_size/1024:.0f} KB")
