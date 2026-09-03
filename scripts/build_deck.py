@@ -541,6 +541,37 @@ text(s, 7.25, 2.62, 5.05, 2.6,
       ("And it is why the recommendation is a pilot rather than a rollout.",
        12.5, WHITE, True, BODY_FONT, 0)])
 
+# ---------------------------------------------------------------- 17 · annex
+# Deliberately one slide, and deliberately after the close. Slides 4 to 12 already
+# carry the report's findings redrawn for a room; appending the eight report pages
+# would repeat the same numbers in a second visual language and end the deck on
+# screenshots instead of on what the analysis does and does not prove. This answers
+# "can I see the tool" without re-arguing the case.
+s = slide()
+title(s, "Annex — the report this came from")
+SHOT = pathlib.Path(__file__).resolve().parents[1] / "docs" / "img" / "report-what-to-do.png"
+if SHOT.exists():
+    pic = s.shapes.add_picture(str(SHOT), Inches(0.75), Inches(2.15), width=Inches(7.9))
+    pic.line.color.rgb = rgb(BORDER)
+    pic.line.width = Pt(0.75)
+text(s, 9.0, 2.15, 3.6, 3.6,
+     [("Four pages", 15, NAVY, True, BODY_FONT, 6),
+      ("Global Overview · Where the exposure is · The Scan · What to do.",
+       12, BODY, False, BODY_FONT, 10),
+      ("Each carries an information panel stating what the page is for, which figures "
+       "it shows, and what is deliberately left off it. The export page behind them is "
+       "the contract a test suite reads.", 12, BODY, False, BODY_FONT, 14),
+      ("The screen shown is What to do — the fourth page, and the one this deck's "
+       "recommendation is drawn from.", 11.5, MUTED, False, BODY_FONT, 0)])
+link(s, 9.0, 5.95, 3.6, 0.3, "The repository",
+     "https://github.com/Alejandro-Tarazona/01_PeopleAnalytics", 12, BLUE)
+link(s, 9.0, 6.35, 3.6, 0.3, "All four pages, with their panels (PDF)",
+     "https://github.com/Alejandro-Tarazona/01_PeopleAnalytics/blob/main/"
+     "MPG_PeopleAnalytics_PBI_Report.pdf", 12, BLUE)
+s.notes_slide.notes_text_frame.text = (
+    "Annex. Not part of the argument - it exists so anyone who wants to see the tool "
+    "behind the numbers can reach it.")
+
 prs.save(OUT)
 
 
